@@ -1,0 +1,85 @@
+services:
+
+  # ─────────────────────────────────────────
+  # Servicio: Base de Datos PostgreSQL 16
+  # ─────────────────────────────────────────
+  db:
+    image: postgres:16-alpine
+    container_name: bovitrans_db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER:     ${POSTGRES_USER:-bovitrans}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-bovitrans_pass}
+      POSTGRES_DB:       ${POSTGRES_DB:-bovitrans}
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./database/init.sql:/docker-entrypoint-initdb.d/01-init.sql:ro
+      - ./database/cities.sql:/docker-entrypoint-initdb.d/02-cities.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-bovitrans} -d ${POSTGRES_DB:-bovitrans}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    networks:
+      - bovitrans_net
+
+  # ─────────────────────────────────────────
+  # Servicio: Aplicación Next.js
+  # ─────────────────────────────────────────
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: bovitrans_app
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      DATABASE_URL:          postgresql://${POSTGRES_USER:-bovitrans}:${POSTGRES_PASSWORD:-bovitrans_pass}@db:5432/${POSTGRES_DB:-bovitrans}
+      FUEL_COST_PER_LITER:   ${FUEL_COST_PER_LITER:-1.45}
+      FUEL_PRICE_PRODUCT:    ${FUEL_PRICE_PRODUCT:-Diésel Porã}
+      NODE_ENV:              ${NODE_ENV:-production}
+    ports:
+      - "3000:3000"
+    #volumes:
+      # En desarrollo: monta el código fuente para hot-reload
+    #  - .:/app
+    #  - /app/node_modules
+    #  - /app/.next
+    networks:
+      - bovitrans_net
+
+  # ─────────────────────────────────────────
+  # Servicio: Scraper PETROPAR
+  # ─────────────────────────────────────────
+  fuel-scraper:
+    build:
+      context: .
+      dockerfile: Dockerfile.scraper
+    container_name: bovitrans_fuel_scraper
+    restart: unless-stopped
+    profiles:
+      - scraper
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: postgresql://${POSTGRES_USER:-bovitrans}:${POSTGRES_PASSWORD:-bovitrans_pass}@db:5432/${POSTGRES_DB:-bovitrans}
+    command: ["python", "scripts/scrape_petropar_prices.py", "--interval-hours", "24"]
+    networks:
+      - bovitrans_net
+
+# ─────────────────────────────────────────
+# Volúmenes y Redes
+# ─────────────────────────────────────────
+volumes:
+  postgres_data:
+    driver: local
+
+networks:
+  bovitrans_net:
+    driver: bridge

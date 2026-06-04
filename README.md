@@ -1,36 +1,69 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# BoviTrans
 
-## Getting Started
+Plataforma operacional para gestionar solicitudes de transporte ganadero,
+clientes, camiones, rutas y costos de combustible.
 
-First, run the development server:
+## Requisitos
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+- Node.js 20 o superior
+- npm
+- Docker Desktop con WSL 2
+
+## Instalacion
+
+```powershell
+git clone https://github.com/maufigue/bovitrans.git
+cd bovitrans
+git switch feature/bovitrans-mvp
+npm install
+Copy-Item .env.example .env.local
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Para desarrollo local, ajusta `DATABASE_URL` en `.env.local` para usar
+`127.0.0.1` como host:
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```env
+DATABASE_URL=postgresql://bovitrans:bovitrans_pass@127.0.0.1:5432/bovitrans
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Ejecucion recomendada
 
-## Learn More
+Levanta PostgreSQL con Docker y ejecuta Next.js localmente:
 
-To learn more about Next.js, take a look at the following resources:
+```powershell
+docker compose up -d db
+npm run dev
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+La aplicacion queda disponible en http://127.0.0.1:3000.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Ejecucion completa con Docker
 
-## Deploy on Vercel
+```powershell
+docker compose up -d --build db app
+```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Scraper de combustibles
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Actualizacion manual desde la API:
+
+```powershell
+Invoke-RestMethod -Uri http://127.0.0.1:3000/api/fuel-prices -Method Post
+```
+
+Ejecucion programada cada 24 horas:
+
+```powershell
+docker compose --profile scraper up -d fuel-scraper
+```
+
+## Verificaciones
+
+```powershell
+npx tsc --noEmit
+npm run build
+docker compose ps
+```
+
+La documentacion funcional y el arbol de requerimientos se encuentran en
+`BACKLOG.md`.

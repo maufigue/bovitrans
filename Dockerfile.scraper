@@ -1,0 +1,12 @@
+FROM python:3.13-slim
+
+ENV PYTHONUNBUFFERED=1
+
+WORKDIR /app
+
+COPY scripts/requirements.txt scripts/requirements.txt
+RUN python -m pip install --no-cache-dir -r scripts/requirements.txt
+
+COPY scripts/scrape_petropar_prices.py scripts/scrape_petropar_prices.py
+
+CMD ["python", "scripts/scrape_petropar_prices.py", "--interval-hours", "24"]
