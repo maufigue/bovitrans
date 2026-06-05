@@ -9,7 +9,7 @@ export async function GET(request: NextRequest) {
     const limit = limitParam ? Number(limitParam) : 20;
 
     if (!Number.isInteger(limit) || limit < 1 || limit > 100) {
-      throw badRequest("limit must be an integer between 1 and 100.");
+      throw badRequest("El límite debe ser un número entero entre 1 y 100.");
     }
 
     const fuelPrices = await listFuelPrices({ limit });

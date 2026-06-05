@@ -18,7 +18,7 @@ export async function GET(request: NextRequest) {
 
     if (statusParam) {
       if (!requestStatuses.includes(statusParam as TransportRequestStatus)) {
-        throw badRequest("Invalid transport request status filter.");
+        throw badRequest("El filtro de estado de la solicitud no es válido.");
       }
 
       status = statusParam as TransportRequestStatus;

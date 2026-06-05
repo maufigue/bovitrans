@@ -4,7 +4,7 @@ import "./globals.css";
 
 export const metadata: Metadata = {
   title: "BoviTrans",
-  description: "Panel logistico para gestionar transporte terrestre de ganado.",
+  description: "Panel logístico para gestionar transporte terrestre de ganado.",
 };
 
 export default function RootLayout({

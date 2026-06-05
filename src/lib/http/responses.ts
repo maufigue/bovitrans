@@ -31,7 +31,7 @@ export function handleApiError(error: unknown) {
   return NextResponse.json(
     {
       error: {
-        message: "Unexpected server error.",
+        message: "Error inesperado del servidor.",
       },
     },
     { status: 500 },

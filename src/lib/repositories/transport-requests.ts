@@ -2,17 +2,22 @@ import type { PoolClient, QueryResultRow } from "pg";
 import { query, withTransaction } from "@/lib/db/pool";
 import {
   calculateCapacityWarning,
+  calculateAverageCattleWeightKg,
   calculateEstimatedArrivalAt,
+  calculateEffectiveTruckCapacity,
   calculateFuelCost,
   calculateHaversineDistanceKm,
   calculateRoadDistanceKm,
   calculateTripsNeeded,
+  estimateFuelConsumptionPerKm,
 } from "@/lib/domain/logistics";
 import type {
   TransportRequest,
   TransportRequestStatus,
   Truck,
   TruckStatus,
+  AxleConfiguration,
+  VehicleConfiguration,
 } from "@/lib/domain/types";
 import { badRequest, conflict, notFound } from "@/lib/http/errors";
 import { getFuelPriceById, type FuelPriceSource } from "@/lib/repositories/fuel-prices";
@@ -28,6 +33,8 @@ type TransportRequestRow = QueryResultRow & {
   client_company_name?: string | null;
   client_name: string;
   cattle_count: number;
+  cattle_weight_min_kg: number;
+  cattle_weight_max_kg: number;
   origin_name: string;
   origin_lat: string;
   origin_lng: string;
@@ -44,6 +51,8 @@ type TransportRequestRow = QueryResultRow & {
   truck_id: string | null;
   assigned_truck_ids: string[] | null;
   notes: string | null;
+  source: "internal" | "external";
+  route_pending: boolean;
   created_at: Date;
   updated_at: Date;
 };
@@ -51,7 +60,18 @@ type TransportRequestRow = QueryResultRow & {
 type TruckRow = QueryResultRow & {
   id: string;
   license_plate: string;
+  brand: string;
+  model: string;
+  engine_power_hp: number | null;
+  tare_weight_tons: string;
+  empty_fuel_consumption_per_km: string;
+  fuel_consumption_per_ton_km: string;
   max_capacity: number;
+  vehicle_configuration: VehicleConfiguration;
+  axle_configuration: AxleConfiguration;
+  length_m: string;
+  max_weight_tons: string;
+  reference_cattle_weight_kg: number;
   fuel_consumption_per_km: string;
   status: TruckStatus;
   created_at: Date;
@@ -81,6 +101,8 @@ function mapTransportRequest(row: TransportRequestRow): TransportRequest {
     clientCompanyName: row.client_company_name ?? null,
     clientName: row.client_name,
     cattleCount: row.cattle_count,
+    cattleWeightMinKg: row.cattle_weight_min_kg ?? 400,
+    cattleWeightMaxKg: row.cattle_weight_max_kg ?? 500,
     originName: row.origin_name,
     originLat: Number(row.origin_lat),
     originLng: Number(row.origin_lng),
@@ -97,6 +119,8 @@ function mapTransportRequest(row: TransportRequestRow): TransportRequest {
     truckId: row.truck_id,
     assignedTruckIds: row.assigned_truck_ids ?? (row.truck_id ? [row.truck_id] : []),
     notes: row.notes,
+    source: row.source ?? "internal",
+    routePending: row.route_pending ?? false,
     createdAt: row.created_at.toISOString(),
     updatedAt: row.updated_at.toISOString(),
   };
@@ -106,7 +130,18 @@ function mapTruck(row: TruckRow): Truck {
   return {
     id: row.id,
     licensePlate: row.license_plate,
+    brand: row.brand,
+    model: row.model,
+    enginePowerHp: row.engine_power_hp,
+    tareWeightTons: Number(row.tare_weight_tons),
+    emptyFuelConsumptionPerKm: Number(row.empty_fuel_consumption_per_km),
+    fuelConsumptionPerTonKm: Number(row.fuel_consumption_per_ton_km),
     maxCapacity: row.max_capacity,
+    vehicleConfiguration: row.vehicle_configuration,
+    axleConfiguration: row.axle_configuration,
+    lengthM: Number(row.length_m),
+    maxWeightTons: Number(row.max_weight_tons),
+    referenceCattleWeightKg: row.reference_cattle_weight_kg,
     fuelConsumptionPerKm: Number(row.fuel_consumption_per_km),
     status: row.status,
     createdAt: row.created_at.toISOString(),
@@ -118,10 +153,10 @@ function buildTransportRequestSelect() {
   return `
     SELECT tr.id, tr.client_id,
       (SELECT c.company_name FROM clients c WHERE c.id = tr.client_id) AS client_company_name,
-      tr.client_name, tr.cattle_count, tr.origin_name, tr.origin_lat,
+      tr.client_name, tr.cattle_count, tr.cattle_weight_min_kg, tr.cattle_weight_max_kg, tr.origin_name, tr.origin_lat,
       tr.origin_lng, tr.destination_name, tr.destination_lat, tr.destination_lng,
       tr.distance_km, tr.fuel_cost, tr.fuel_price_id, tr.trips_needed, tr.departure_at,
-      tr.estimated_arrival_at, tr.status, tr.truck_id, tr.notes, tr.created_at,
+      tr.estimated_arrival_at, tr.status, tr.truck_id, tr.notes, tr.source, tr.route_pending, tr.created_at,
       tr.updated_at,
       COALESCE(
         (
@@ -137,7 +172,11 @@ function buildTransportRequestSelect() {
 
 function buildTruckSelect() {
   return `
-    SELECT id, license_plate, max_capacity, fuel_consumption_per_km, status, created_at, updated_at
+    SELECT id, license_plate, brand, model, engine_power_hp, tare_weight_tons,
+      empty_fuel_consumption_per_km, fuel_consumption_per_ton_km,
+      max_capacity, vehicle_configuration, axle_configuration,
+      length_m, max_weight_tons, reference_cattle_weight_kg,
+      fuel_consumption_per_km, status, created_at, updated_at
     FROM trucks
   `;
 }
@@ -178,7 +217,7 @@ export async function getTransportRequestById(id: string) {
   const request = result.rows[0];
 
   if (!request) {
-    throw notFound("Transport request not found.");
+    throw notFound("Solicitud logística no encontrada.");
   }
 
   return mapTransportRequest(request);
@@ -188,26 +227,33 @@ export async function createTransportRequest(input: CreateTransportRequestInput)
   const result = await query<TransportRequestRow>(
     `
       INSERT INTO transport_requests (
-        client_name, cattle_count, origin_name, origin_lat, origin_lng,
-        destination_name, destination_lat, destination_lng, notes
+        client_id, client_name, cattle_count, cattle_weight_min_kg, cattle_weight_max_kg, origin_name, origin_lat, origin_lng,
+        destination_name, destination_lat, destination_lng, departure_at, notes
+        , source, route_pending
       )
-      VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
-      RETURNING id, client_id, client_name, cattle_count, origin_name, origin_lat, origin_lng,
+      VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, COALESCE($14, 'internal'), COALESCE($15, FALSE))
+      RETURNING id, client_id, client_name, cattle_count, cattle_weight_min_kg, cattle_weight_max_kg, origin_name, origin_lat, origin_lng,
         destination_name, destination_lat, destination_lng, distance_km, fuel_cost,
         trips_needed, departure_at, estimated_arrival_at, status, truck_id,
-        notes, created_at, updated_at,
+        notes, source, route_pending, created_at, updated_at,
         ARRAY[]::uuid[] AS assigned_truck_ids
     `,
     [
+      input.clientId,
       input.clientName,
       input.cattleCount,
+      input.cattleWeightMinKg,
+      input.cattleWeightMaxKg,
       input.originName,
       input.originLat,
       input.originLng,
       input.destinationName,
       input.destinationLat,
       input.destinationLng,
+      input.departureAt,
       input.notes ?? null,
+      input.source ?? "internal",
+      input.routePending ?? false,
     ],
   );
 
@@ -218,6 +264,35 @@ export async function updateTransportRequest(
   id: string,
   input: UpdateTransportRequestInput,
 ) {
+  const currentStatusResult = await query<{ status: TransportRequestStatus }>(
+    "SELECT status FROM transport_requests WHERE id = $1",
+    [id],
+  );
+  const currentStatus = currentStatusResult.rows[0]?.status;
+
+  if (!currentStatus) throw notFound("Solicitud logística no encontrada.");
+  if (currentStatus === "completed") {
+    throw conflict("Las logísticas completadas son registros históricos y no pueden modificarse.");
+  }
+
+  if (input.status === "confirmed") {
+    const currentResult = await query<{
+      status: TransportRequestStatus;
+      truck_id: string | null;
+    }>(
+      "SELECT status, truck_id FROM transport_requests WHERE id = $1",
+      [id],
+    );
+    const current = currentResult.rows[0];
+
+    if (!current) throw notFound("Solicitud logística no encontrada.");
+    if (current.status !== "assigned" || !current.truck_id) {
+      throw conflict(
+        "Only an assigned transport request with reserved trucks can be confirmed.",
+      );
+    }
+  }
+
   const assignments: string[] = [];
   const values: unknown[] = [];
 
@@ -233,12 +308,14 @@ export async function updateTransportRequest(
       [input.clientId],
     );
 
-    if (!clientResult.rows[0]) throw notFound("Client not found.");
+    if (!clientResult.rows[0]) throw notFound("Cliente no encontrado.");
 
     addAssignment("client_id", input.clientId);
     addAssignment("client_name", clientResult.rows[0].business_name);
   }
   if (input.cattleCount !== undefined) addAssignment("cattle_count", input.cattleCount);
+  if (input.cattleWeightMinKg !== undefined) addAssignment("cattle_weight_min_kg", input.cattleWeightMinKg);
+  if (input.cattleWeightMaxKg !== undefined) addAssignment("cattle_weight_max_kg", input.cattleWeightMaxKg);
   if (input.originName !== undefined) addAssignment("origin_name", input.originName);
   if (input.originLat !== undefined) addAssignment("origin_lat", input.originLat);
   if (input.originLng !== undefined) addAssignment("origin_lng", input.originLng);
@@ -252,6 +329,8 @@ export async function updateTransportRequest(
     addAssignment("destination_lng", input.destinationLng);
   }
   if (input.notes !== undefined) addAssignment("notes", input.notes);
+  if (input.departureAt !== undefined) addAssignment("departure_at", input.departureAt);
+  if (input.routePending !== undefined) addAssignment("route_pending", input.routePending);
   if (input.status !== undefined) addAssignment("status", input.status);
 
   values.push(id);
@@ -261,10 +340,10 @@ export async function updateTransportRequest(
       UPDATE transport_requests
       SET ${assignments.join(", ")}
       WHERE id = $${values.length}
-      RETURNING id, client_id, client_name, cattle_count, origin_name, origin_lat, origin_lng,
+      RETURNING id, client_id, client_name, cattle_count, cattle_weight_min_kg, cattle_weight_max_kg, origin_name, origin_lat, origin_lng,
         destination_name, destination_lat, destination_lng, distance_km, fuel_cost,
         trips_needed, departure_at, estimated_arrival_at, status, truck_id,
-        notes, created_at, updated_at,
+        notes, source, route_pending, created_at, updated_at,
         ARRAY[]::uuid[] AS assigned_truck_ids
     `,
     values,
@@ -273,7 +352,7 @@ export async function updateTransportRequest(
   const request = result.rows[0];
 
   if (!request) {
-    throw notFound("Transport request not found.");
+    throw notFound("Solicitud logística no encontrada.");
   }
 
   return mapTransportRequest(request);
@@ -292,29 +371,10 @@ async function findRequestForUpdate(client: PoolClient, id: string) {
   const request = result.rows[0];
 
   if (!request) {
-    throw notFound("Transport request not found.");
+    throw notFound("Solicitud logística no encontrada.");
   }
 
   return request;
-}
-
-async function findTruckForUpdate(client: PoolClient, id: string) {
-  const result = await client.query<TruckRow>(
-    `
-      ${buildTruckSelect()}
-      WHERE id = $1
-      FOR UPDATE
-    `,
-    [id],
-  );
-
-  const truck = result.rows[0];
-
-  if (!truck) {
-    throw notFound("Truck not found.");
-  }
-
-  return truck;
 }
 
 async function findTrucksForUpdate(client: PoolClient, ids: string[]) {
@@ -333,7 +393,7 @@ async function findTrucksForUpdate(client: PoolClient, ids: string[]) {
     const truck = trucksById.get(id);
 
     if (!truck) {
-      throw notFound("Truck not found.");
+      throw notFound("Camión no encontrado.");
     }
 
     return truck;
@@ -347,7 +407,7 @@ async function ensureTruckCanBeAssigned(
   trucks: TruckRow[],
 ) {
   if (trucks.some((truck) => truck.status === "maintenance")) {
-    throw badRequest("Truck is under maintenance and cannot be assigned.");
+    throw badRequest("El camión está en mantenimiento y no puede asignarse.");
   }
 
   const result = await client.query<{ id: string }>(
@@ -357,7 +417,7 @@ async function ensureTruckCanBeAssigned(
       LEFT JOIN transport_request_trucks trt ON trt.transport_request_id = tr.id
       WHERE (tr.truck_id = ANY($1::uuid[]) OR trt.truck_id = ANY($1::uuid[]))
         AND tr.id <> $2
-        AND tr.status IN ('assigned', 'in_progress')
+        AND tr.status IN ('assigned', 'confirmed', 'in_progress')
       LIMIT 1
     `,
     [truckIds, requestId],
@@ -387,7 +447,7 @@ async function releasePreviousTruckIfUnused(
         LEFT JOIN transport_request_trucks trt ON trt.transport_request_id = tr.id
         WHERE (tr.truck_id = candidate.truck_id OR trt.truck_id = candidate.truck_id)
           AND tr.id <> $2
-          AND tr.status IN ('assigned', 'in_progress')
+          AND tr.status IN ('assigned', 'confirmed', 'in_progress')
       )
     `,
     [previousTruckIds, requestId],
@@ -420,9 +480,51 @@ export async function assignTruckToTransportRequest(
     const request = mapTransportRequest(requestRow);
     const trucks = truckRows.map(mapTruck);
     const primaryTruck = trucks[0];
-    const totalCapacity = trucks.reduce((sum, truck) => sum + truck.maxCapacity, 0);
-    const totalFuelConsumptionPerKm = trucks.reduce(
-      (sum, truck) => sum + truck.fuelConsumptionPerKm,
+    const averageCattleWeightKg = calculateAverageCattleWeightKg(
+      request.cattleWeightMinKg,
+      request.cattleWeightMaxKg,
+    );
+    const totalCapacity = trucks.reduce(
+      (sum, truck) =>
+        sum +
+        calculateEffectiveTruckCapacity({
+          maxWeightTons: truck.maxWeightTons,
+          averageCattleWeightKg,
+        }),
+      0,
+    );
+    let remainingCattleForConsumption = request.cattleCount;
+    const totalFuelConsumptionPerKm = trucks.reduce((sum, truck) => {
+      const truckCapacity = calculateEffectiveTruckCapacity({
+        maxWeightTons: truck.maxWeightTons,
+        averageCattleWeightKg,
+      });
+      const cattleOnTruck = Math.min(
+        Math.max(remainingCattleForConsumption, 0),
+        truckCapacity,
+      );
+      remainingCattleForConsumption -= cattleOnTruck;
+
+      return sum + estimateFuelConsumptionPerKm({
+        vehicleConfiguration: truck.vehicleConfiguration,
+        maxWeightTons: truck.maxWeightTons,
+        emptyFuelConsumptionPerKm: truck.emptyFuelConsumptionPerKm,
+        fuelConsumptionPerTonKm: truck.fuelConsumptionPerTonKm,
+        cattleCount: cattleOnTruck,
+        averageCattleWeightKg,
+      });
+    }, 0);
+    const totalEmptyReturnFuelConsumptionPerKm = trucks.reduce(
+      (sum, truck) =>
+        sum +
+        estimateFuelConsumptionPerKm({
+          vehicleConfiguration: truck.vehicleConfiguration,
+          maxWeightTons: truck.maxWeightTons,
+          emptyFuelConsumptionPerKm: truck.emptyFuelConsumptionPerKm,
+          fuelConsumptionPerTonKm: truck.fuelConsumptionPerTonKm,
+          cattleCount: 0,
+          averageCattleWeightKg,
+        }),
       0,
     );
     const capacityWarning = calculateCapacityWarning(
@@ -431,7 +533,7 @@ export async function assignTruckToTransportRequest(
     );
 
     if (capacityWarning && !input.confirmCapacityOverflow) {
-      throw conflict("Truck capacity is exceeded. Explicit confirmation is required.", {
+      throw conflict("La capacidad del camión fue excedida. Se requiere confirmación explícita.", {
         excessCattle: capacityWarning.excessCattle,
         tripsNeeded: capacityWarning.tripsNeeded,
       });
@@ -459,10 +561,31 @@ export async function assignTruckToTransportRequest(
       totalFuelConsumptionPerKm,
       fuelCostPerLiter,
       tripsNeeded,
+      totalEmptyReturnFuelConsumptionPerKm,
     );
     const estimatedArrivalAt = input.departureAt
       ? calculateEstimatedArrivalAt(input.departureAt, distanceKm, tripsNeeded)
       : null;
+
+    if (!input.confirmAssignment) {
+      return {
+        request: {
+          ...request,
+          distanceKm,
+          fuelCost,
+          fuelPriceId: input.fuelPriceId,
+          tripsNeeded,
+          departureAt: input.departureAt?.toISOString() ?? null,
+          estimatedArrivalAt: estimatedArrivalAt?.toISOString() ?? null,
+          assignedTruckIds: input.truckIds,
+          truckId: primaryTruck.id,
+        },
+        truck: primaryTruck,
+        trucks,
+        metrics: { distanceKm, fuelCost, fuelCostPerLiter, fuelPrice, tripsNeeded },
+        capacityWarning,
+      };
+    }
 
     await client.query(
       "DELETE FROM transport_request_trucks WHERE transport_request_id = $1",
@@ -482,10 +605,10 @@ export async function assignTruckToTransportRequest(
           departure_at = $5,
           estimated_arrival_at = $6
         WHERE id = $7
-        RETURNING id, client_id, client_name, cattle_count, origin_name, origin_lat, origin_lng,
+        RETURNING id, client_id, client_name, cattle_count, cattle_weight_min_kg, cattle_weight_max_kg, origin_name, origin_lat, origin_lng,
           destination_name, destination_lat, destination_lng, distance_km, fuel_cost, fuel_price_id,
           trips_needed, departure_at, estimated_arrival_at, status, truck_id,
-          notes, created_at, updated_at,
+          notes, source, route_pending, created_at, updated_at,
           $8::uuid[] AS assigned_truck_ids
       `,
       [
@@ -520,7 +643,9 @@ export async function assignTruckToTransportRequest(
         UPDATE trucks
         SET status = 'assigned'
         WHERE id = ANY($1::uuid[])
-        RETURNING id, license_plate, max_capacity, fuel_consumption_per_km, status, created_at, updated_at
+        RETURNING id, license_plate, max_capacity, vehicle_configuration, axle_configuration,
+          length_m, max_weight_tons, reference_cattle_weight_kg,
+          fuel_consumption_per_km, status, created_at, updated_at
       `,
       [input.truckIds],
     );
@@ -551,7 +676,7 @@ export async function unassignTruckFromTransportRequest(requestId: string) {
     const request = mapTransportRequest(requestRow);
 
     if (request.assignedTruckIds.length === 0) {
-      throw badRequest("Transport request does not have an assigned truck.");
+      throw badRequest("La solicitud logística no tiene camión asignado.");
     }
 
     await client.query(
@@ -572,15 +697,76 @@ export async function unassignTruckFromTransportRequest(requestId: string) {
           departure_at = NULL,
           estimated_arrival_at = NULL
         WHERE id = $1
-        RETURNING id, client_id, client_name, cattle_count, origin_name, origin_lat, origin_lng,
+        RETURNING id, client_id, client_name, cattle_count, cattle_weight_min_kg, cattle_weight_max_kg, origin_name, origin_lat, origin_lng,
           destination_name, destination_lat, destination_lng, distance_km, fuel_cost,
           trips_needed, departure_at, estimated_arrival_at, status, truck_id,
-          notes, created_at, updated_at,
+          notes, source, route_pending, created_at, updated_at,
           ARRAY[]::uuid[] AS assigned_truck_ids
       `,
       [request.id],
     );
 
     return mapTransportRequest(updatedRequestResult.rows[0]);
+  });
+}
+
+export async function deleteTransportRequest(requestId: string) {
+  return withTransaction(async (client) => {
+    const request = mapTransportRequest(await findRequestForUpdate(client, requestId));
+    if (!["pending", "assigned"].includes(request.status)) {
+      throw conflict("Only pending or assigned requests can be deleted.");
+    }
+    await client.query("DELETE FROM transport_request_trucks WHERE transport_request_id = $1", [request.id]);
+    await releasePreviousTruckIfUnused(client, request.assignedTruckIds, request.id);
+    await client.query("DELETE FROM transport_requests WHERE id = $1", [request.id]);
+  });
+}
+
+export async function cancelConfirmedTransportRequest(requestId: string) {
+  return withTransaction(async (client) => {
+    const request = mapTransportRequest(await findRequestForUpdate(client, requestId));
+    if (request.status !== "confirmed") {
+      throw conflict("Only confirmed logistics can be cancelled.");
+    }
+    const now = new Date();
+    const currentMonthStart = new Date(now.getFullYear(), now.getMonth(), 1);
+    if (!request.departureAt || new Date(request.departureAt) < currentMonthStart) {
+      throw conflict("Los viajes de meses anteriores no pueden anularse.");
+    }
+    await releasePreviousTruckIfUnused(client, request.assignedTruckIds, request.id);
+    const result = await client.query<TransportRequestRow>(
+      `UPDATE transport_requests
+       SET status = 'cancelled'
+       WHERE id = $1
+       RETURNING id, client_id, client_name, cattle_count, cattle_weight_min_kg, cattle_weight_max_kg, origin_name, origin_lat, origin_lng,
+         destination_name, destination_lat, destination_lng, distance_km, fuel_cost, fuel_price_id,
+         trips_needed, departure_at, estimated_arrival_at, status, truck_id, notes, source, route_pending,
+         created_at, updated_at, $2::uuid[] AS assigned_truck_ids`,
+      [request.id, request.assignedTruckIds],
+    );
+    return mapTransportRequest(result.rows[0]);
+  });
+}
+
+export async function completeConfirmedTransportRequest(requestId: string) {
+  return withTransaction(async (client) => {
+    const request = mapTransportRequest(await findRequestForUpdate(client, requestId));
+    if (request.status !== "confirmed") {
+      throw conflict("Only confirmed logistics can be completed.");
+    }
+
+    await releasePreviousTruckIfUnused(client, request.assignedTruckIds, request.id);
+    const result = await client.query<TransportRequestRow>(
+      `UPDATE transport_requests
+       SET status = 'completed'
+       WHERE id = $1
+       RETURNING id, client_id, client_name, cattle_count, cattle_weight_min_kg, cattle_weight_max_kg, origin_name, origin_lat, origin_lng,
+         destination_name, destination_lat, destination_lng, distance_km, fuel_cost, fuel_price_id,
+         trips_needed, departure_at, estimated_arrival_at, status, truck_id, notes, source, route_pending,
+         created_at, updated_at, $2::uuid[] AS assigned_truck_ids`,
+      [request.id, request.assignedTruckIds],
+    );
+
+    return mapTransportRequest(result.rows[0]);
   });
 }

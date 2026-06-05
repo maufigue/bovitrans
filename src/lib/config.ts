@@ -6,7 +6,7 @@ export const env = {
 
 export function requireDatabaseUrl() {
   if (!env.databaseUrl) {
-    throw new Error("DATABASE_URL is required to connect to PostgreSQL.");
+    throw new Error("DATABASE_URL es requerida para conectar con PostgreSQL.");
   }
 
   return env.databaseUrl;

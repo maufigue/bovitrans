@@ -217,7 +217,7 @@ export async function getFuelPriceById(
     [id],
   );
   const price = result.rows[0];
-  if (!price) throw notFound("Fuel price not found.");
+  if (!price) throw notFound("Precio de combustible no encontrado.");
 
   return {
     id: price.id,

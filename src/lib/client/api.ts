@@ -1,9 +1,13 @@
 import type {
+  AxleConfiguration,
   Client,
   City,
   DocumentType,
+  AppModulePermission,
+  AppUser,
   TransportRequest,
   Truck,
+  VehicleConfiguration,
 } from "@/lib/domain/types";
 
 type ApiResponse<T> = {
@@ -103,8 +107,163 @@ export function fetchTrucks() {
   return requestJson<Truck[]>("/api/trucks");
 }
 
+export function createTruck(input: {
+  licensePlate: string;
+  brand?: string;
+  model?: string;
+  enginePowerHp?: number | null;
+  tareWeightTons?: number;
+  emptyFuelConsumptionPerKm?: number;
+  fuelConsumptionPerTonKm?: number;
+  maxCapacity?: number;
+  vehicleConfiguration?: VehicleConfiguration;
+  axleConfiguration?: AxleConfiguration;
+  lengthM?: number;
+  maxWeightTons?: number;
+  referenceCattleWeightKg?: number;
+  fuelConsumptionPerKm?: number;
+  status?: Truck["status"];
+}) {
+  return requestJson<Truck>("/api/trucks", {
+    method: "POST",
+    body: JSON.stringify(input),
+  });
+}
+
+export function updateTruck(
+  truckId: string,
+  input: Partial<{
+    licensePlate: string;
+    brand: string;
+    model: string;
+    enginePowerHp: number | null;
+    tareWeightTons: number;
+    emptyFuelConsumptionPerKm: number;
+    fuelConsumptionPerTonKm: number;
+    maxCapacity: number;
+    vehicleConfiguration: VehicleConfiguration;
+    axleConfiguration: AxleConfiguration;
+    lengthM: number;
+    maxWeightTons: number;
+    referenceCattleWeightKg: number;
+    fuelConsumptionPerKm: number;
+    status: Truck["status"];
+  }>,
+) {
+  return requestJson<Truck>(`/api/trucks/${truckId}`, {
+    method: "PATCH",
+    body: JSON.stringify(input),
+  });
+}
+
+export function deleteTruck(truckId: string) {
+  return requestJson<void>(`/api/trucks/${truckId}`, { method: "DELETE" });
+}
+
+export function login(input: { identifier: string; password: string }) {
+  return requestJson<AppUser>("/api/auth/login", {
+    method: "POST",
+    body: JSON.stringify(input),
+  });
+}
+
+export function fetchAppUsers() {
+  return requestJson<AppUser[]>("/api/users");
+}
+
+export function createAppUser(input: {
+  username: string;
+  email: string;
+  fullName: string;
+  password: string;
+  active: boolean;
+  permissions: AppModulePermission[];
+}) {
+  return requestJson<AppUser>("/api/users", {
+    method: "POST",
+    body: JSON.stringify(input),
+  });
+}
+
+export function updateAppUser(
+  userId: string,
+  input: Partial<{
+    username: string;
+    email: string;
+    fullName: string;
+    password: string;
+    active: boolean;
+    permissions: AppModulePermission[];
+  }>,
+) {
+  return requestJson<AppUser>(`/api/users/${userId}`, {
+    method: "PATCH",
+    body: JSON.stringify(input),
+  });
+}
+
+export function deleteAppUser(userId: string) {
+  return requestJson<void>(`/api/users/${userId}`, { method: "DELETE" });
+}
+
 export function fetchTransportRequests() {
   return requestJson<TransportRequest[]>("/api/transport-requests");
+}
+
+export function createTransportRequest(input: {
+  clientId: string;
+  clientName: string;
+  cattleCount: number;
+  cattleWeightMinKg: number;
+  cattleWeightMaxKg: number;
+  originName: string;
+  originLat: number;
+  originLng: number;
+  destinationName: string;
+  destinationLat: number;
+  destinationLng: number;
+  departureAt: string;
+  notes: string | null;
+  source?: "internal" | "external";
+  routePending?: boolean;
+}) {
+  return requestJson<TransportRequest>("/api/transport-requests", {
+    method: "POST",
+    body: JSON.stringify(input),
+  });
+}
+
+export function updateTransportRequestDetails(
+  requestId: string,
+  input: Partial<{
+    cattleCount: number;
+    cattleWeightMinKg: number;
+    cattleWeightMaxKg: number;
+    originName: string;
+    originLat: number;
+    originLng: number;
+    destinationName: string;
+    destinationLat: number;
+    destinationLng: number;
+    departureAt: string;
+    notes: string | null;
+    routePending: boolean;
+  }>,
+) {
+  return requestJson<TransportRequest>(`/api/transport-requests/${requestId}`, {
+    method: "PATCH",
+    body: JSON.stringify(input),
+  });
+}
+
+export function updateTransportRequestStatus(
+  requestId: string,
+  status: TransportRequest["status"],
+) {
+  return requestJson<TransportRequest>(`/api/transport-requests/${requestId}`, {
+    method: "PATCH",
+    body: JSON.stringify({ status }),
+  });
 }
 
 export function fetchClients(search = "") {
@@ -183,6 +342,7 @@ export function assignTruck(params: {
   departureAt?: string | null;
   confirmCapacityOverflow?: boolean;
   fuelPriceId: string;
+  confirmAssignment?: boolean;
 }) {
   return requestJson<AssignmentResponse>(
     `/api/transport-requests/${params.requestId}/assign-truck`,
@@ -194,6 +354,7 @@ export function assignTruck(params: {
         departureAt: params.departureAt ?? null,
         confirmCapacityOverflow: params.confirmCapacityOverflow ?? false,
         fuelPriceId: params.fuelPriceId,
+        confirmAssignment: params.confirmAssignment ?? false,
       }),
     },
   );
@@ -207,4 +368,8 @@ export function unassignTruck(requestId: string) {
       body: JSON.stringify({}),
     },
   );
+}
+
+export function deleteTransportRequest(requestId: string) {
+  return requestJson<void>(`/api/transport-requests/${requestId}`, { method: "DELETE" });
 }

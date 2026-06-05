@@ -7,15 +7,21 @@ import {
 } from "@/lib/validation/common";
 
 export type CreateTransportRequestInput = {
+  clientId: string;
   clientName: string;
   cattleCount: number;
+  cattleWeightMinKg: number;
+  cattleWeightMaxKg: number;
   originName: string;
   originLat: number;
   originLng: number;
   destinationName: string;
   destinationLat: number;
   destinationLng: number;
+  departureAt: Date;
   notes?: string | null;
+  source?: "internal" | "external";
+  routePending?: boolean;
 };
 
 export type UpdateTransportRequestInput = Partial<
@@ -31,6 +37,7 @@ export type AssignTruckInput = {
   fuelPriceId: string;
   confirmCapacityOverflow: boolean;
   departureAt: Date | null;
+  confirmAssignment: boolean;
 };
 
 function normalizeCoordinate(value: unknown, range: { min: number; max: number }) {
@@ -81,7 +88,7 @@ function validateOriginDestination(
     originLat === destinationLat &&
     originLng === destinationLng
   ) {
-    errors.destination = "Origin and destination must be different.";
+    errors.destination = "El origen y el destino deben ser puntos diferentes.";
   }
 }
 
@@ -89,11 +96,20 @@ export function parseCreateTransportRequestInput(
   payload: unknown,
 ): CreateTransportRequestInput {
   if (!isRecord(payload)) {
-    throw badRequest("Request body must be a JSON object.");
+    throw badRequest("El cuerpo de la solicitud debe ser un objeto JSON.");
   }
 
   const clientName = normalizeString(payload.clientName);
+  const clientId = normalizeString(payload.clientId);
   const cattleCount = normalizePositiveInteger(payload.cattleCount);
+  const cattleWeightMinKg =
+    payload.cattleWeightMinKg === undefined
+      ? 400
+      : normalizePositiveInteger(payload.cattleWeightMinKg);
+  const cattleWeightMaxKg =
+    payload.cattleWeightMaxKg === undefined
+      ? 500
+      : normalizePositiveInteger(payload.cattleWeightMaxKg);
   const originName = normalizeString(payload.originName);
   const originLat = normalizeCoordinate(payload.originLat, { min: -90, max: 90 });
   const originLng = normalizeCoordinate(payload.originLng, { min: -180, max: 180 });
@@ -107,39 +123,69 @@ export function parseCreateTransportRequestInput(
     max: 180,
   });
   const notes = normalizeNullableText(payload.notes);
+  const source =
+    payload.source === "external" || payload.source === "internal"
+      ? payload.source
+      : undefined;
+  const routePending =
+    typeof payload.routePending === "boolean" ? payload.routePending : undefined;
+  const departureAtValue = normalizeString(payload.departureAt);
+  const departureAt = departureAtValue ? new Date(departureAtValue) : null;
 
   const errors: Record<string, string> = {};
 
   if (!clientName) {
-    errors.clientName = "Client name is required.";
+    errors.clientName = "El nombre del cliente es requerido.";
+  }
+  if (!clientId) {
+    errors.clientId = "Debe seleccionar un cliente.";
   }
 
   if (!cattleCount) {
-    errors.cattleCount = "Cattle count must be a positive integer.";
+    errors.cattleCount = "La cantidad de cabezas debe ser un número entero positivo.";
+  }
+
+  if (!cattleWeightMinKg) {
+    errors.cattleWeightMinKg = "El peso mínimo debe ser un número entero positivo.";
+  }
+
+  if (!cattleWeightMaxKg) {
+    errors.cattleWeightMaxKg = "El peso máximo debe ser un número entero positivo.";
+  }
+
+  if (
+    cattleWeightMinKg &&
+    cattleWeightMaxKg &&
+    cattleWeightMinKg > cattleWeightMaxKg
+  ) {
+    errors.cattleWeightMaxKg = "El peso máximo debe ser mayor o igual al peso mínimo.";
   }
 
   if (!originName) {
-    errors.originName = "Origin name is required.";
+    errors.originName = "El nombre del origen es requerido.";
   }
 
   if (originLat === null) {
-    errors.originLat = "Origin latitude must be between -90 and 90.";
+    errors.originLat = "La latitud de origen debe estar entre -90 y 90.";
   }
 
   if (originLng === null) {
-    errors.originLng = "Origin longitude must be between -180 and 180.";
+    errors.originLng = "La longitud de origen debe estar entre -180 y 180.";
   }
 
   if (!destinationName) {
-    errors.destinationName = "Destination name is required.";
+    errors.destinationName = "El nombre del destino es requerido.";
+  }
+  if (!departureAt || Number.isNaN(departureAt.getTime()) || departureAt.getTime() < Date.now()) {
+    errors.departureAt = "La fecha de salida debe ser futura.";
   }
 
   if (destinationLat === null) {
-    errors.destinationLat = "Destination latitude must be between -90 and 90.";
+    errors.destinationLat = "La latitud de destino debe estar entre -90 y 90.";
   }
 
   if (destinationLng === null) {
-    errors.destinationLng = "Destination longitude must be between -180 and 180.";
+    errors.destinationLng = "La longitud de destino debe estar entre -180 y 180.";
   }
 
   validateOriginDestination(
@@ -151,19 +197,25 @@ export function parseCreateTransportRequestInput(
   );
 
   if (Object.keys(errors).length > 0) {
-    throw badRequest("Invalid transport request payload.", errors);
+    throw badRequest("Datos de la solicitud logística no válidos.", errors);
   }
 
   return {
+    clientId: clientId as string,
     clientName: clientName as string,
     cattleCount: cattleCount as number,
+    cattleWeightMinKg: cattleWeightMinKg as number,
+    cattleWeightMaxKg: cattleWeightMaxKg as number,
     originName: originName as string,
     originLat: originLat as number,
     originLng: originLng as number,
     destinationName: destinationName as string,
     destinationLat: destinationLat as number,
     destinationLng: destinationLng as number,
+    departureAt: departureAt as Date,
     notes,
+    source,
+    routePending,
   };
 }
 
@@ -171,7 +223,7 @@ export function parseUpdateTransportRequestInput(
   payload: unknown,
 ): UpdateTransportRequestInput {
   if (!isRecord(payload)) {
-    throw badRequest("Request body must be a JSON object.");
+    throw badRequest("El cuerpo de la solicitud debe ser un objeto JSON.");
   }
 
   const input: UpdateTransportRequestInput = {};
@@ -181,7 +233,7 @@ export function parseUpdateTransportRequestInput(
     const clientName = normalizeString(payload.clientName);
 
     if (!clientName) {
-      errors.clientName = "Client name cannot be empty.";
+      errors.clientName = "El nombre del cliente no puede estar vacío.";
     } else {
       input.clientName = clientName;
     }
@@ -191,7 +243,7 @@ export function parseUpdateTransportRequestInput(
     const clientId = normalizeString(payload.clientId);
 
     if (!clientId) {
-      errors.clientId = "Client id cannot be empty.";
+      errors.clientId = "El identificador del cliente no puede estar vacío.";
     } else {
       input.clientId = clientId;
     }
@@ -201,9 +253,29 @@ export function parseUpdateTransportRequestInput(
     const cattleCount = normalizePositiveInteger(payload.cattleCount);
 
     if (!cattleCount) {
-      errors.cattleCount = "Cattle count must be a positive integer.";
+      errors.cattleCount = "La cantidad de cabezas debe ser un número entero positivo.";
     } else {
       input.cattleCount = cattleCount;
+    }
+  }
+
+  if (payload.cattleWeightMinKg !== undefined) {
+    const cattleWeightMinKg = normalizePositiveInteger(payload.cattleWeightMinKg);
+
+    if (!cattleWeightMinKg) {
+      errors.cattleWeightMinKg = "El peso mínimo debe ser un número entero positivo.";
+    } else {
+      input.cattleWeightMinKg = cattleWeightMinKg;
+    }
+  }
+
+  if (payload.cattleWeightMaxKg !== undefined) {
+    const cattleWeightMaxKg = normalizePositiveInteger(payload.cattleWeightMaxKg);
+
+    if (!cattleWeightMaxKg) {
+      errors.cattleWeightMaxKg = "El peso máximo debe ser un número entero positivo.";
+    } else {
+      input.cattleWeightMaxKg = cattleWeightMaxKg;
     }
   }
 
@@ -211,7 +283,7 @@ export function parseUpdateTransportRequestInput(
     const originName = normalizeString(payload.originName);
 
     if (!originName) {
-      errors.originName = "Origin name cannot be empty.";
+      errors.originName = "El nombre del origen no puede estar vacío.";
     } else {
       input.originName = originName;
     }
@@ -221,7 +293,7 @@ export function parseUpdateTransportRequestInput(
     const originLat = normalizeCoordinate(payload.originLat, { min: -90, max: 90 });
 
     if (originLat === null) {
-      errors.originLat = "Origin latitude must be between -90 and 90.";
+      errors.originLat = "La latitud de origen debe estar entre -90 y 90.";
     } else {
       input.originLat = originLat;
     }
@@ -231,7 +303,7 @@ export function parseUpdateTransportRequestInput(
     const originLng = normalizeCoordinate(payload.originLng, { min: -180, max: 180 });
 
     if (originLng === null) {
-      errors.originLng = "Origin longitude must be between -180 and 180.";
+      errors.originLng = "La longitud de origen debe estar entre -180 y 180.";
     } else {
       input.originLng = originLng;
     }
@@ -241,7 +313,7 @@ export function parseUpdateTransportRequestInput(
     const destinationName = normalizeString(payload.destinationName);
 
     if (!destinationName) {
-      errors.destinationName = "Destination name cannot be empty.";
+      errors.destinationName = "El nombre del destino no puede estar vacío.";
     } else {
       input.destinationName = destinationName;
     }
@@ -254,7 +326,7 @@ export function parseUpdateTransportRequestInput(
     });
 
     if (destinationLat === null) {
-      errors.destinationLat = "Destination latitude must be between -90 and 90.";
+      errors.destinationLat = "La latitud de destino debe estar entre -90 y 90.";
     } else {
       input.destinationLat = destinationLat;
     }
@@ -267,7 +339,7 @@ export function parseUpdateTransportRequestInput(
     });
 
     if (destinationLng === null) {
-      errors.destinationLng = "Destination longitude must be between -180 and 180.";
+      errors.destinationLng = "La longitud de destino debe estar entre -180 y 180.";
     } else {
       input.destinationLng = destinationLng;
     }
@@ -277,23 +349,49 @@ export function parseUpdateTransportRequestInput(
     input.notes = normalizeNullableText(payload.notes);
   }
 
+  const minWeight =
+    input.cattleWeightMinKg ??
+    (typeof payload.cattleWeightMinKg === "number" ? payload.cattleWeightMinKg : undefined);
+  const maxWeight =
+    input.cattleWeightMaxKg ??
+    (typeof payload.cattleWeightMaxKg === "number" ? payload.cattleWeightMaxKg : undefined);
+
+  if (minWeight && maxWeight && minWeight > maxWeight) {
+    errors.cattleWeightMaxKg = "El peso máximo debe ser mayor o igual al peso mínimo.";
+  }
+
+  if (payload.departureAt !== undefined) {
+    const departureAtValue = normalizeString(payload.departureAt);
+    const departureAt = departureAtValue ? new Date(departureAtValue) : null;
+
+    if (!departureAt || Number.isNaN(departureAt.getTime())) {
+      errors.departureAt = "La fecha de salida debe ser válida.";
+    } else {
+      input.departureAt = departureAt;
+    }
+  }
+
+  if (payload.routePending !== undefined) {
+    input.routePending = payload.routePending === true;
+  }
+
   if (payload.status !== undefined) {
     const status = normalizeRequestStatus(payload.status);
 
     if (!status) {
       errors.status =
-        "Status must be pending, assigned, in_progress, completed, or cancelled.";
+        "El estado debe ser Pendiente, Asignada, Confirmada, En tránsito, Completada o Anulada.";
     } else {
       input.status = status;
     }
   }
 
   if (Object.keys(errors).length > 0) {
-    throw badRequest("Invalid transport request payload.", errors);
+    throw badRequest("Datos de la solicitud logística no válidos.", errors);
   }
 
   if (Object.keys(input).length === 0) {
-    throw badRequest("At least one field must be provided.");
+    throw badRequest("Debe informar al menos un campo para actualizar.");
   }
 
   return input;
@@ -301,7 +399,7 @@ export function parseUpdateTransportRequestInput(
 
 export function parseAssignTruckInput(payload: unknown): AssignTruckInput {
   if (!isRecord(payload)) {
-    throw badRequest("Request body must be a JSON object.");
+    throw badRequest("El cuerpo de la solicitud debe ser un objeto JSON.");
   }
 
   const truckId = normalizeString(payload.truckId);
@@ -319,27 +417,29 @@ export function parseAssignTruckInput(payload: unknown): AssignTruckInput {
   const departureAtValue = normalizeString(payload.departureAt);
   const departureAt = departureAtValue ? new Date(departureAtValue) : null;
   const fuelPriceId = normalizeString(payload.fuelPriceId);
+  const confirmAssignment = payload.confirmAssignment === true;
 
   if (truckIds.length === 0) {
-    throw badRequest("At least one truck is required.");
+    throw badRequest("Debe seleccionar al menos un camión.");
   }
 
   if (!fuelPriceId) {
-    throw badRequest("fuelPriceId is required.");
+    throw badRequest("Debe seleccionar un precio de combustible.");
   }
 
   if (departureAtValue && Number.isNaN(departureAt?.getTime())) {
-    throw badRequest("departureAt must be a valid date.");
+    throw badRequest("La fecha de salida debe ser válida.");
   }
 
   if (departureAt && departureAt.getTime() < Date.now()) {
-    throw badRequest("departureAt cannot be earlier than the current date and time.");
+    throw badRequest("La fecha de salida no puede ser anterior a la fecha y hora actual.");
   }
 
   return {
     truckId: truckIds[0],
     truckIds,
     fuelPriceId,
+    confirmAssignment,
     confirmCapacityOverflow,
     departureAt,
   };

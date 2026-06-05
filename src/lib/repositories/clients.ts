@@ -75,7 +75,7 @@ export async function getClientById(id: string) {
     [id],
   );
 
-  if (!result.rows[0]) throw notFound("Client not found.");
+  if (!result.rows[0]) throw notFound("Cliente no encontrado.");
 
   return mapClient(result.rows[0]);
 }
@@ -158,7 +158,7 @@ export async function updateClient(id: string, input: UpdateClientInput) {
       values,
     );
 
-    if (!result.rows[0]) throw notFound("Client not found.");
+    if (!result.rows[0]) throw notFound("Cliente no encontrado.");
 
     if (input.businessName !== undefined) {
       await query(
@@ -183,10 +183,10 @@ export async function deleteClient(id: string) {
       [id],
     );
 
-    if (!result.rows[0]) throw notFound("Client not found.");
+    if (!result.rows[0]) throw notFound("Cliente no encontrado.");
   } catch (error) {
     if (isPgError(error) && error.code === "23503") {
-      throw conflict("Client cannot be deleted because it has transport requests.");
+      throw conflict("El cliente no puede eliminarse porque tiene solicitudes logísticas asociadas.");
     }
     throw error;
   }

@@ -16,7 +16,7 @@ export async function GET(request: NextRequest) {
 
     if (statusParam) {
       if (!truckStatuses.includes(statusParam as TruckStatus)) {
-        throw badRequest("Invalid truck status filter.");
+        throw badRequest("El filtro de estado del camión no es válido.");
       }
 
       status = statusParam as TruckStatus;
@@ -26,7 +26,7 @@ export async function GET(request: NextRequest) {
       const parsedCapacity = Number(capacityParam);
 
       if (!Number.isInteger(parsedCapacity) || parsedCapacity <= 0) {
-        throw badRequest("available_for_capacity must be a positive integer.");
+        throw badRequest("La capacidad requerida debe ser un número entero positivo.");
       }
 
       availableForCapacity = parsedCapacity;

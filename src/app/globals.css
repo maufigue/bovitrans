@@ -86,6 +86,26 @@ textarea {
   color: #a1a1aa;
 }
 
+.history-date-input,
+.history-date-input::-webkit-datetime-edit,
+.history-date-input::-webkit-datetime-edit-fields-wrapper,
+.history-date-input::-webkit-datetime-edit-text,
+.history-date-input::-webkit-datetime-edit-day-field,
+.history-date-input::-webkit-datetime-edit-month-field,
+.history-date-input::-webkit-datetime-edit-year-field {
+  color: #71717a;
+}
+
+.dark .history-date-input,
+.dark .history-date-input::-webkit-datetime-edit,
+.dark .history-date-input::-webkit-datetime-edit-fields-wrapper,
+.dark .history-date-input::-webkit-datetime-edit-text,
+.dark .history-date-input::-webkit-datetime-edit-day-field,
+.dark .history-date-input::-webkit-datetime-edit-month-field,
+.dark .history-date-input::-webkit-datetime-edit-year-field {
+  color: #a1a1aa;
+}
+
 .dark .bg-zinc-950.text-white {
   background-color: #f4f4f5;
   color: #18181b;
@@ -116,6 +136,10 @@ textarea {
 
 .dark .map-route-summary p:last-child {
   color: #f4f4f5;
+}
+
+.dark .bovitrans-logo-dark {
+  filter: brightness(0) invert(1) contrast(1.08);
 }
 
 .dark .bg-red-50 {
@@ -179,4 +203,24 @@ textarea {
 .dark .operational-request-selected .selected-request-status {
   background-color: #18181b;
   color: #ffffff;
+}
+
+.dark .user-row-selected {
+  background-color: #d4d4d8;
+  border-color: #a1a1aa;
+  color: #000000;
+}
+
+.dark .user-row-selected p,
+.dark .user-row-selected span {
+  color: #000000;
+}
+
+.dark .user-row-selected .user-row-muted {
+  color: #27272a;
+}
+
+.dark .user-row-selected .user-row-status {
+  background-color: #bbf7d0;
+  color: #047857;
 }
