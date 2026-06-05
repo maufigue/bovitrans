@@ -9,7 +9,7 @@ clientes, camiones, rutas y costos de combustible.
 - npm
 - Docker Desktop con WSL 2
 
-## Instalacion
+## Instalación
 
 ```powershell
 git clone https://github.com/maufigue/bovitrans.git
@@ -26,7 +26,7 @@ Para desarrollo local, ajusta `DATABASE_URL` en `.env.local` para usar
 DATABASE_URL=postgresql://bovitrans:bovitrans_pass@127.0.0.1:5432/bovitrans
 ```
 
-## Ejecucion recomendada
+## Ejecución recomendada
 
 Levanta PostgreSQL con Docker y ejecuta Next.js localmente:
 
@@ -35,9 +35,9 @@ docker compose up -d db
 npm run dev
 ```
 
-La aplicacion queda disponible en http://127.0.0.1:3000.
+La aplicación queda disponible en http://127.0.0.1:3000.
 
-## Ejecucion completa con Docker
+## Ejecución completa con Docker
 
 ```powershell
 docker compose up -d --build db app
@@ -45,13 +45,13 @@ docker compose up -d --build db app
 
 ## Scraper de combustibles
 
-Actualizacion manual desde la API:
+Actualización manual desde la API:
 
 ```powershell
 Invoke-RestMethod -Uri http://127.0.0.1:3000/api/fuel-prices -Method Post
 ```
 
-Ejecucion programada cada 24 horas:
+Ejecución programada cada 24 horas:
 
 ```powershell
 docker compose --profile scraper up -d fuel-scraper

@@ -45,6 +45,8 @@ next-env.d.ts
 # local tooling and QA artifacts
 /.codex-runtime/
 /*-qa.png
+.codex-dev.log
+.codex-dev.err.log
 
 # python
 __pycache__/

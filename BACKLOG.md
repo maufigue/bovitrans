@@ -444,3 +444,56 @@ cálculo del costo total en múltiples viajes.
 ---
 
 *Backlog generado con asistencia de Claude Sonnet — Proyecto BoviTrans MVP — Fase 1 completada.*
+
+---
+
+## Evolución Implementada del MVP
+
+> Esta sección consolida los hitos ejecutados durante la construcción del MVP para mantener trazabilidad entre el backlog inicial, los prompts de evolución y el producto final.
+
+### Hitos Funcionales
+
+- Panel Logístico con navegación lateral, estados Pendiente, Asignada, Confirmada, Completada y Anulada.
+- Creación interna de solicitudes con selección de cliente, mapa, origen, destino, fecha/hora de salida, cabezas de ganado y rango de peso por cabeza.
+- Página pública de solicitud de presupuesto logístico ganadero para clientes externos.
+- Finalización interna de solicitudes externas, incluyendo contacto por WhatsApp para completar datos faltantes.
+- Administración de clientes con tipo de documento, ciudad, teléfono con prefijo, correo opcional y buscador.
+- Administración de flotas con configuración vehicular, ejes/rodados, longitud, límite de peso, tara, consumo vacío y factor de consumo por tonelada.
+- Gestión de usuarios internos con permisos por módulo y superusuario administrador protegido.
+- Scraping de precios de combustible desde PETROPAR y combustibles.com.py, con actualización manual desde la interfaz.
+- Envío de presupuesto por WhatsApp con datos de ruta, fechas, cabezas, camiones, viajes, costo e instrucciones de confirmación.
+- Manual básico de uso disponible desde la interfaz interna.
+
+### Reglas de Negocio Incorporadas
+
+- La capacidad de camión se calcula por solicitud usando el peso promedio informado por el operador.
+- El consumo cargado se estima usando consumo vacío L/km más toneladas transportadas por factor L/km/tn.
+- En múltiples viajes se consideran viajes cargados de ida y retornos vacíos intermedios.
+- Las fechas de salida no pueden ser anteriores al momento actual.
+- Los camiones no pueden pasar a estado Asignado desde Administración de Flotas.
+- Las solicitudes completadas son históricas y no pueden modificarse.
+- Los viajes de meses anteriores no pueden anularse.
+- Las solicitudes externas ingresan como Pendientes y requieren completar ruta y datos operativos antes de presupuestar.
+
+### Prompts de Evolución Relevantes
+
+```text
+Actuá como Desarrollador y Arquitecto Full Stack Senior para evolucionar BoviTrans desde el backlog inicial hacia un MVP entregable.
+Priorizá trazabilidad de requerimientos, consistencia SQL, endpoints REST robustos, UI/UX profesional y dockerización evaluable con un solo comando.
+```
+
+```text
+Diseñá el Panel Logístico para que el operador pueda crear solicitudes, asignar camiones, calcular costos, enviar presupuesto por WhatsApp y mover la solicitud entre estados operativos con confirmaciones claras.
+```
+
+```text
+Extendé Administración de Flotas para calcular capacidad y consumo por viaje usando normativa de dimensiones/pesos, configuración de ejes, peso promedio del ganado y especificaciones técnicas del camión.
+```
+
+```text
+Auditá textos visibles, documentación y mensajes de error para el mercado hispano. Conservá nombres técnicos internos cuando renombrarlos aumente el riesgo sin aportar valor visible.
+```
+
+```text
+Verificá el MVP contra la rúbrica senior: ingeniería de requerimientos con IA, modelado SQL, arquitectura/API, UI/UX con mapas e infraestructura Docker.
+```

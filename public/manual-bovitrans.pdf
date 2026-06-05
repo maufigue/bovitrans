@@ -1,0 +1,636 @@
+%PDF-1.4
+1 0 obj
+<< /Type /Catalog /Pages 2 0 R >>
+endobj
+2 0 obj
+<< /Type /Pages /Kids [5 0 R 7 0 R 9 0 R 11 0 R] /Count 4 >>
+endobj
+3 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica /Encoding /WinAnsiEncoding >>
+endobj
+4 0 obj
+<< /Length 3134 >>
+stream
+BT
+/F1 20 Tf
+50 760 Td
+(BOVITRANS) Tj
+/F1 14 Tf
+50 736 Td
+(Manual básico de uso) Tj
+/F1 10 Tf
+50 716 Td
+(Gestión de Transporte Ganadero) Tj
+/F1 10 Tf
+50 694 Td
+() Tj
+/F1 13 Tf
+50 682 Td
+(Acceso al sistema) Tj
+/F1 10 Tf
+50 664 Td
+() Tj
+/F1 10 Tf
+50 652 Td
+(BOVITRANS cuenta con una página pública para solicitudes externas y un acceso interno para) Tj
+/F1 10 Tf
+50 638 Td
+(operadores autorizados. Para ingresar al sistema interno, utilice el acceso de inicio de) Tj
+/F1 10 Tf
+50 624 Td
+(sesión, escriba su correo o usuario y su contraseña. Si las credenciales no son válidas, el) Tj
+/F1 10 Tf
+50 610 Td
+(sistema mostrará una advertencia para corregirlas.) Tj
+/F1 10 Tf
+50 596 Td
+() Tj
+/F1 10 Tf
+50 584 Td
+(Una vez dentro, el sistema muestra solo los módulos habilitados para su usuario. El menú) Tj
+/F1 10 Tf
+50 570 Td
+(superior permite visualizar el usuario autenticado y cerrar sesión.) Tj
+/F1 10 Tf
+50 556 Td
+() Tj
+/F1 13 Tf
+50 544 Td
+(Inicio interno) Tj
+/F1 10 Tf
+50 526 Td
+() Tj
+/F1 10 Tf
+50 514 Td
+(La pantalla de inicio interno permite acceder a los módulos disponibles:) Tj
+/F1 10 Tf
+50 500 Td
+() Tj
+/F1 10 Tf
+50 488 Td
+(- Panel Logístico.) Tj
+/F1 10 Tf
+50 474 Td
+(- Administración de Flotas.) Tj
+/F1 10 Tf
+50 460 Td
+(- Usuarios.) Tj
+/F1 10 Tf
+50 446 Td
+() Tj
+/F1 10 Tf
+50 434 Td
+(El usuario administrador conserva todos los permisos y puede gestionar los módulos) Tj
+/F1 10 Tf
+50 420 Td
+(completos. Los usuarios comunes solo ven las opciones autorizadas por el administrador.) Tj
+/F1 10 Tf
+50 406 Td
+() Tj
+/F1 13 Tf
+50 394 Td
+(Panel Logístico) Tj
+/F1 10 Tf
+50 376 Td
+() Tj
+/F1 10 Tf
+50 364 Td
+(El Panel Logístico centraliza el ciclo de vida de las solicitudes de transporte ganadero.) Tj
+/F1 10 Tf
+50 350 Td
+(Las vistas principales son:) Tj
+/F1 10 Tf
+50 336 Td
+() Tj
+/F1 10 Tf
+50 324 Td
+(- Nueva Solicitud: creación interna de pedidos logísticos.) Tj
+/F1 10 Tf
+50 310 Td
+(- Pendientes: solicitudes listas para completar datos, calcular viaje y asignar camión.) Tj
+/F1 10 Tf
+50 296 Td
+(- Asignadas: solicitudes con presupuesto calculado y pendientes de confirmación del cliente.) Tj
+/F1 10 Tf
+50 282 Td
+(- Confirmadas: viajes aceptados por el cliente.) Tj
+/F1 10 Tf
+50 268 Td
+(- Completadas: registro histórico de viajes finalizados.) Tj
+/F1 10 Tf
+50 254 Td
+(- Anuladas: registro histórico de viajes anulados.) Tj
+/F1 10 Tf
+50 240 Td
+() Tj
+/F1 10 Tf
+50 228 Td
+(El panel incluye métricas operativas, listado de solicitudes, detalle de cliente,) Tj
+/F1 10 Tf
+50 214 Td
+(combustible, ruta, mapa, cálculo de distancia, viajes, salida, llegada estimada,) Tj
+/F1 10 Tf
+50 200 Td
+(observaciones y acciones disponibles según el estado.) Tj
+/F1 10 Tf
+50 186 Td
+() Tj
+/F1 13 Tf
+50 174 Td
+(Nueva solicitud interna) Tj
+/F1 10 Tf
+50 156 Td
+() Tj
+/F1 10 Tf
+50 144 Td
+(Para crear una solicitud interna:) Tj
+/F1 10 Tf
+50 130 Td
+() Tj
+/F1 10 Tf
+50 118 Td
+(Seleccione o cree el cliente.) Tj
+/F1 10 Tf
+50 104 Td
+(Ingrese la cantidad de cabezas de ganado.) Tj
+/F1 10 Tf
+50 90 Td
+(Indique el peso mínimo y máximo por cabeza en kg.) Tj
+/F1 10 Tf
+50 76 Td
+(Seleccione fecha y hora de salida. No se permiten fechas anteriores al momento actual.) Tj
+ET
+endstream
+endobj
+5 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 3 0 R >> >> /Contents 4 0 R >>
+endobj
+6 0 obj
+<< /Length 2913 >>
+stream
+BT
+/F1 10 Tf
+50 760 Td
+(Marque el punto de origen en el mapa y confirme.) Tj
+/F1 10 Tf
+50 746 Td
+(Marque el punto de destino en el mapa y confirme.) Tj
+/F1 10 Tf
+50 732 Td
+(Cree la solicitud.) Tj
+/F1 10 Tf
+50 718 Td
+() Tj
+/F1 10 Tf
+50 706 Td
+(El rango de peso permite estimar la capacidad real de cada camión y el consumo de) Tj
+/F1 10 Tf
+50 692 Td
+(combustible según la carga transportada.) Tj
+/F1 10 Tf
+50 678 Td
+() Tj
+/F1 13 Tf
+50 666 Td
+(Solicitudes externas) Tj
+/F1 10 Tf
+50 648 Td
+() Tj
+/F1 10 Tf
+50 636 Td
+(La página pública permite que un cliente solicite presupuesto con datos básicos:) Tj
+/F1 10 Tf
+50 622 Td
+() Tj
+/F1 10 Tf
+50 610 Td
+(- Nombre o razón social.) Tj
+/F1 10 Tf
+50 596 Td
+(- C.I. o RUC.) Tj
+/F1 10 Tf
+50 582 Td
+(- Teléfono con prefijo internacional.) Tj
+/F1 10 Tf
+50 568 Td
+(- Ciudad registrada en la base de datos.) Tj
+/F1 10 Tf
+50 554 Td
+() Tj
+/F1 10 Tf
+50 542 Td
+(Estas solicitudes ingresan como Pendientes. El operador debe contactar al cliente por) Tj
+/F1 10 Tf
+50 528 Td
+(WhatsApp para completar punto de origen, destino, fecha, horario, cantidad de cabezas y) Tj
+/F1 10 Tf
+50 514 Td
+(rango de peso. Solo las solicitudes externas muestran el botón de WhatsApp para solicitar) Tj
+/F1 10 Tf
+50 500 Td
+(esos datos.) Tj
+/F1 10 Tf
+50 486 Td
+() Tj
+/F1 13 Tf
+50 474 Td
+(Clientes) Tj
+/F1 10 Tf
+50 456 Td
+() Tj
+/F1 10 Tf
+50 444 Td
+(El bloque Cliente permite seleccionar, crear, editar o eliminar clientes según el flujo) Tj
+/F1 10 Tf
+50 430 Td
+(operativo. Los datos principales son:) Tj
+/F1 10 Tf
+50 416 Td
+() Tj
+/F1 10 Tf
+50 404 Td
+(- Nombre de empresa.) Tj
+/F1 10 Tf
+50 390 Td
+(- Razón social.) Tj
+/F1 10 Tf
+50 376 Td
+(- Tipo y número de documento.) Tj
+/F1 10 Tf
+50 362 Td
+(- Teléfono con prefijo.) Tj
+/F1 10 Tf
+50 348 Td
+(- Ciudad.) Tj
+/F1 10 Tf
+50 334 Td
+(- Correo opcional.) Tj
+/F1 10 Tf
+50 320 Td
+() Tj
+/F1 10 Tf
+50 308 Td
+(El buscador permite localizar clientes por empresa, razón social, documento o teléfono.) Tj
+/F1 10 Tf
+50 294 Td
+() Tj
+/F1 13 Tf
+50 282 Td
+(Combustible) Tj
+/F1 10 Tf
+50 264 Td
+() Tj
+/F1 10 Tf
+50 252 Td
+(El bloque Combustible permite elegir emblema y tipo de combustible cuando existen precios) Tj
+/F1 10 Tf
+50 238 Td
+(cargados. La opción de actualización ejecuta el scraper de precios para refrescar la base de) Tj
+/F1 10 Tf
+50 224 Td
+(datos. En el caso de Petropar, el sistema muestra vigencia cuando la fuente dispone de ese) Tj
+/F1 10 Tf
+50 210 Td
+(dato.) Tj
+/F1 10 Tf
+50 196 Td
+() Tj
+/F1 10 Tf
+50 184 Td
+(El costo se calcula en guaraníes y utiliza:) Tj
+/F1 10 Tf
+50 170 Td
+() Tj
+/F1 10 Tf
+50 158 Td
+(Distancia estimada x consumo estimado L/km x precio por litro.) Tj
+/F1 10 Tf
+50 144 Td
+() Tj
+/F1 10 Tf
+50 132 Td
+(Para múltiples viajes, el cálculo contempla viajes cargados de ida y retornos vacíos) Tj
+/F1 10 Tf
+50 118 Td
+(intermedios cuando corresponde.) Tj
+/F1 10 Tf
+50 104 Td
+() Tj
+/F1 13 Tf
+50 92 Td
+(Asignación de camiones) Tj
+/F1 10 Tf
+50 74 Td
+() Tj
+ET
+endstream
+endobj
+7 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 3 0 R >> >> /Contents 6 0 R >>
+endobj
+8 0 obj
+<< /Length 2925 >>
+stream
+BT
+/F1 10 Tf
+50 760 Td
+(En Pendientes, el operador selecciona uno o varios camiones y utiliza Calcular Viaje para) Tj
+/F1 10 Tf
+50 746 Td
+(obtener:) Tj
+/F1 10 Tf
+50 732 Td
+() Tj
+/F1 10 Tf
+50 720 Td
+(- Distancia estimada.) Tj
+/F1 10 Tf
+50 706 Td
+(- Capacidad efectiva.) Tj
+/F1 10 Tf
+50 692 Td
+(- Viajes necesarios.) Tj
+/F1 10 Tf
+50 678 Td
+(- Consumo estimado.) Tj
+/F1 10 Tf
+50 664 Td
+(- Costo de combustible.) Tj
+/F1 10 Tf
+50 650 Td
+(- Salida y llegada estimada.) Tj
+/F1 10 Tf
+50 636 Td
+() Tj
+/F1 10 Tf
+50 624 Td
+(Si la cantidad de ganado excede la capacidad del camión seleccionado, el sistema permite) Tj
+/F1 10 Tf
+50 610 Td
+(evaluar múltiples camiones o múltiples viajes. Luego se confirma la asignación para mover la) Tj
+/F1 10 Tf
+50 596 Td
+(solicitud a Asignadas.) Tj
+/F1 10 Tf
+50 582 Td
+() Tj
+/F1 13 Tf
+50 570 Td
+(Presupuesto por WhatsApp) Tj
+/F1 10 Tf
+50 552 Td
+() Tj
+/F1 10 Tf
+50 540 Td
+(En Asignadas, el operador puede enviar el presupuesto al cliente por WhatsApp. El mensaje) Tj
+/F1 10 Tf
+50 526 Td
+(incluye cliente, ruta, cabezas, distancia, camiones, viajes, salida, llegada estimada, costo) Tj
+/F1 10 Tf
+50 512 Td
+(de combustible, instrucciones para confirmar con "Ok", datos de transferencia y alternativa) Tj
+/F1 10 Tf
+50 498 Td
+(de rechazo con "No".) Tj
+/F1 10 Tf
+50 484 Td
+() Tj
+/F1 10 Tf
+50 472 Td
+(El teléfono del cliente debe guardarse con prefijo internacional para evitar errores de) Tj
+/F1 10 Tf
+50 458 Td
+(apertura de WhatsApp.) Tj
+/F1 10 Tf
+50 444 Td
+() Tj
+/F1 13 Tf
+50 432 Td
+(Confirmación, cancelación y cierre) Tj
+/F1 10 Tf
+50 414 Td
+() Tj
+/F1 10 Tf
+50 402 Td
+(En Asignadas:) Tj
+/F1 10 Tf
+50 388 Td
+() Tj
+/F1 10 Tf
+50 376 Td
+(- Confirmar Logística mueve la solicitud a Confirmadas.) Tj
+/F1 10 Tf
+50 362 Td
+(- Cancelar Logística devuelve la solicitud a Pendientes.) Tj
+/F1 10 Tf
+50 348 Td
+(- Eliminar Solicitud borra solicitudes pendientes o asignadas cuando el cliente no acepta el) Tj
+/F1 10 Tf
+50 334 Td
+(presupuesto.) Tj
+/F1 10 Tf
+50 320 Td
+() Tj
+/F1 10 Tf
+50 308 Td
+(En Confirmadas:) Tj
+/F1 10 Tf
+50 294 Td
+() Tj
+/F1 10 Tf
+50 282 Td
+(- Completar Viaje mueve el registro a Completadas.) Tj
+/F1 10 Tf
+50 268 Td
+(- Anular Viaje mueve el registro a Anuladas, siempre que la solicitud no corresponda a un) Tj
+/F1 10 Tf
+50 254 Td
+(mes anterior.) Tj
+/F1 10 Tf
+50 240 Td
+() Tj
+/F1 10 Tf
+50 228 Td
+(Las vistas Confirmadas, Completadas y Anuladas cuentan con buscadores por empresa,) Tj
+/F1 10 Tf
+50 214 Td
+(documento, teléfono, fecha y periodo cuando corresponde.) Tj
+/F1 10 Tf
+50 200 Td
+() Tj
+/F1 13 Tf
+50 188 Td
+(Administración de Flotas) Tj
+/F1 10 Tf
+50 170 Td
+() Tj
+/F1 10 Tf
+50 158 Td
+(El módulo de flotas gestiona los camiones de BOVITRANS. Cada vehículo registra:) Tj
+/F1 10 Tf
+50 144 Td
+() Tj
+/F1 10 Tf
+50 132 Td
+(- Patente.) Tj
+/F1 10 Tf
+50 118 Td
+(- Marca y modelo.) Tj
+/F1 10 Tf
+50 104 Td
+(- Potencia.) Tj
+/F1 10 Tf
+50 90 Td
+(- Tara.) Tj
+/F1 10 Tf
+50 76 Td
+(- Configuración vehicular.) Tj
+ET
+endstream
+endobj
+9 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 3 0 R >> >> /Contents 8 0 R >>
+endobj
+10 0 obj
+<< /Length 2379 >>
+stream
+BT
+/F1 10 Tf
+50 760 Td
+(- Configuración de eje y rodado.) Tj
+/F1 10 Tf
+50 746 Td
+(- Longitud máxima.) Tj
+/F1 10 Tf
+50 732 Td
+(- Límite de peso.) Tj
+/F1 10 Tf
+50 718 Td
+(- Consumo vacío L/km.) Tj
+/F1 10 Tf
+50 704 Td
+(- Factor de consumo L/km/tn.) Tj
+/F1 10 Tf
+50 690 Td
+(- Estado operativo.) Tj
+/F1 10 Tf
+50 676 Td
+() Tj
+/F1 10 Tf
+50 664 Td
+(La capacidad máxima de cabezas y el consumo cargado se calculan durante cada solicitud según) Tj
+/F1 10 Tf
+50 650 Td
+(el peso promedio informado. Desde Flotas no se puede crear ni cambiar manualmente un camión) Tj
+/F1 10 Tf
+50 636 Td
+(al estado Asignado; ese estado solo se gestiona desde el Panel Logístico.) Tj
+/F1 10 Tf
+50 622 Td
+() Tj
+/F1 13 Tf
+50 610 Td
+(Usuarios y permisos) Tj
+/F1 10 Tf
+50 592 Td
+() Tj
+/F1 10 Tf
+50 580 Td
+(El módulo Usuarios permite crear, editar, activar, desactivar y eliminar usuarios internos.) Tj
+/F1 10 Tf
+50 566 Td
+(También permite otorgar o quitar acceso a:) Tj
+/F1 10 Tf
+50 552 Td
+() Tj
+/F1 10 Tf
+50 540 Td
+(- Panel Logístico.) Tj
+/F1 10 Tf
+50 526 Td
+(- Administración de Flotas.) Tj
+/F1 10 Tf
+50 512 Td
+(- Usuarios.) Tj
+/F1 10 Tf
+50 498 Td
+() Tj
+/F1 10 Tf
+50 486 Td
+(El usuario administrador es superusuario, no puede eliminarse ni perder permisos críticos.) Tj
+/F1 10 Tf
+50 472 Td
+() Tj
+/F1 13 Tf
+50 460 Td
+(Mapa y rutas) Tj
+/F1 10 Tf
+50 442 Td
+() Tj
+/F1 10 Tf
+50 430 Td
+(El mapa permite seleccionar origen y destino, visualizar marcadores, ver la ruta estimada y) Tj
+/F1 10 Tf
+50 416 Td
+(operar con controles de acercamiento y alejamiento. La distancia se calcula con rutas reales) Tj
+/F1 10 Tf
+50 402 Td
+(cuando el servicio externo responde correctamente, y el sistema conserva un comportamiento) Tj
+/F1 10 Tf
+50 388 Td
+(funcional ante errores de red.) Tj
+/F1 10 Tf
+50 374 Td
+() Tj
+/F1 13 Tf
+50 362 Td
+(Recomendaciones operativas) Tj
+/F1 10 Tf
+50 344 Td
+() Tj
+/F1 10 Tf
+50 332 Td
+(- Mantenga actualizados los precios de combustible antes de presupuestar.) Tj
+/F1 10 Tf
+50 318 Td
+(- Verifique que el teléfono del cliente incluya prefijo.) Tj
+/F1 10 Tf
+50 304 Td
+(- Revise el rango de peso antes de calcular capacidad y viajes.) Tj
+/F1 10 Tf
+50 290 Td
+(- Confirme la logística solo después de la aceptación del cliente.) Tj
+/F1 10 Tf
+50 276 Td
+(- Use Anular Viaje para conservar registro histórico cuando una operación confirmada no se) Tj
+/F1 10 Tf
+50 262 Td
+(realiza.) Tj
+/F1 10 Tf
+50 248 Td
+() Tj
+ET
+endstream
+endobj
+11 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 3 0 R >> >> /Contents 10 0 R >>
+endobj
+xref
+0 12
+0000000000 65535 f 
+0000000009 00000 n 
+0000000058 00000 n 
+0000000134 00000 n 
+0000000231 00000 n 
+0000003417 00000 n 
+0000003543 00000 n 
+0000006508 00000 n 
+0000006634 00000 n 
+0000009611 00000 n 
+0000009737 00000 n 
+0000012169 00000 n 
+trailer
+<< /Size 12 /Root 1 0 R >>
+startxref
+12297
+%%EOF

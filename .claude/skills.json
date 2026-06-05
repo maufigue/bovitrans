@@ -1,0 +1,51 @@
+{
+  "project": "BoviTrans",
+  "language": "es",
+  "skills": [
+    {
+      "name": "ingenieria_requerimientos_bovitrans",
+      "description": "Analiza historias de usuario, criterios de aceptación y reglas de negocio logístico ganadero.",
+      "prompts": [
+        "Validá que cada historia de usuario tenga actor, objetivo, beneficio y criterios de aceptación observables.",
+        "Identificá casos borde en estados Pendiente, Asignada, Confirmada, Completada y Anulada.",
+        "Proponé tareas técnicas trazables a endpoints, tablas, componentes y pruebas."
+      ]
+    },
+    {
+      "name": "modelado_sql_bovitrans",
+      "description": "Revisa tablas PostgreSQL, relaciones, constraints, índices y consistencia de datos.",
+      "prompts": [
+        "Auditá llaves primarias, foráneas, UNIQUE, CHECK e índices.",
+        "Verificá consistencia entre clientes, ciudades, usuarios, permisos, camiones, precios y solicitudes.",
+        "Detectá riesgos de datos históricos y operaciones que no deberían eliminarse."
+      ]
+    },
+    {
+      "name": "api_next_bovitrans",
+      "description": "Evalúa endpoints REST en Next.js App Router con TypeScript y pg.",
+      "prompts": [
+        "Revisá códigos HTTP, validaciones, manejo de errores y transacciones.",
+        "Confirmá que la asignación de camiones actualice solicitud y flota de forma consistente.",
+        "Buscá mensajes de error visibles que deban estar en español profesional."
+      ]
+    },
+    {
+      "name": "ui_ux_logistica_bovitrans",
+      "description": "Evalúa la experiencia del operador logístico, mapa, tarjetas, estados y responsive.",
+      "prompts": [
+        "Revisá legibilidad en modo claro y oscuro.",
+        "Validá que el mapa permita seleccionar origen/destino y visualizar rutas.",
+        "Evaluá la claridad de acciones críticas como confirmar, cancelar, anular y completar."
+      ]
+    },
+    {
+      "name": "infraestructura_docker_bovitrans",
+      "description": "Audita Docker Compose, Dockerfile, variables de entorno, volúmenes y scraper.",
+      "prompts": [
+        "Verificá que docker compose up --build levante app y base de datos.",
+        "Confirmá persistencia en volumen PostgreSQL e inicialización con init.sql/cities.sql.",
+        "Revisá .env.example, .dockerignore y perfiles del scraper de combustible."
+      ]
+    }
+  ]
+}
