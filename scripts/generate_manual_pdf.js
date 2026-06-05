@@ -13,6 +13,8 @@ function cleanText(value) {
     .replace(/^\d+\.\s+/, "")
     .replace(/^- /, "- ")
     .replace(/\*\*/g, "")
+    .replace(/[×]/g, "x")
+    .replace(/[–—]/g, "-")
     .replace(/"/g, "\"");
 }
 
@@ -48,26 +50,26 @@ for (const rawLine of markdown.split(/\r?\n/)) {
   if (!line) {
     contentLines.push({ text: "", size: 10, leading: 12 });
   } else if (line.startsWith("# ")) {
-    contentLines.push({ text: cleanText(line), size: 18, leading: 22, heading: true });
+    contentLines.push({ text: cleanText(line), size: 18, leading: 24, heading: true });
   } else if (line.startsWith("## ")) {
-    contentLines.push({ text: cleanText(line), size: 13, leading: 18, heading: true });
+    contentLines.push({ text: cleanText(line), size: 12, leading: 18, heading: true });
   } else {
-    for (const wrapped of wrapText(line, 92)) {
-      contentLines.push({ text: wrapped, size: 10, leading: 14 });
+    for (const wrapped of wrapText(line, 105)) {
+      contentLines.push({ text: wrapped, size: 9, leading: 12 });
     }
   }
 }
 
 const pages = [];
 let page = [];
-let y = 760;
+let y = 770;
 
 function addLine(line) {
   const nextY = y - line.leading;
   if (nextY < 60) {
     pages.push(page);
     page = [];
-    y = 760;
+    y = 770;
   }
 
   page.push({ ...line, y });
@@ -75,7 +77,7 @@ function addLine(line) {
 }
 
 addLine({ text: "BOVITRANS", size: 20, leading: 24, heading: true });
-addLine({ text: "Manual básico de uso", size: 14, leading: 20, heading: true });
+addLine({ text: "Manual básico de uso", size: 14, leading: 18, heading: true });
 addLine({ text: "Gestión de Transporte Ganadero", size: 10, leading: 22 });
 
 for (const line of contentLines.slice(1)) addLine(line);
@@ -96,9 +98,14 @@ for (const pageLines of pages) {
   const streamLines = ["BT"];
   for (const line of pageLines) {
     streamLines.push(`/F1 ${line.size} Tf`);
-    streamLines.push(`50 ${line.y} Td`);
+    streamLines.push(`1 0 0 1 50 ${line.y} Tm`);
     streamLines.push(`(${escapePdfText(line.text)}) Tj`);
   }
+  streamLines.push(`/F1 8 Tf`);
+  streamLines.push(`1 0 0 1 50 35 Tm`);
+  streamLines.push(`(BOVITRANS - Manual básico de uso) Tj`);
+  streamLines.push(`1 0 0 1 500 35 Tm`);
+  streamLines.push(`(Página ${pageIds.length + 1}) Tj`);
   streamLines.push("ET");
   const stream = streamLines.join("\n");
   const streamId = addObject(`<< /Length ${Buffer.byteLength(stream, "latin1")} >>\nstream\n${stream}\nendstream`);

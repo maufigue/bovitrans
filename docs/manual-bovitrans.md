@@ -1,152 +1,482 @@
 # Manual Básico de Uso - BOVITRANS
 
-## 1. Acceso al sistema
+Gestión de Transporte Ganadero
 
-BOVITRANS cuenta con una página pública para solicitudes externas y un acceso interno para operadores autorizados. Para ingresar al sistema interno, utilice el acceso de inicio de sesión, escriba su correo o usuario y su contraseña. Si las credenciales no son válidas, el sistema mostrará una advertencia para corregirlas.
+Este manual explica el uso básico de la plataforma BOVITRANS para operadores internos, administradores y clientes externos. Su objetivo es servir como guía rápida para crear solicitudes, administrar clientes, calcular presupuestos, asignar camiones, enviar mensajes por WhatsApp, gestionar flota y controlar usuarios.
 
-Una vez dentro, el sistema muestra solo los módulos habilitados para su usuario. El menú superior permite visualizar el usuario autenticado y cerrar sesión.
+## 1. Conceptos principales
 
-## 2. Inicio interno
+BOVITRANS organiza la operación logística ganadera en módulos:
 
-La pantalla de inicio interno permite acceder a los módulos disponibles:
+- Página pública: permite que un cliente externo solicite un presupuesto.
+- Inicio de sesión: permite el acceso de operadores y administradores internos.
+- Inicio interno: muestra los módulos habilitados según permisos.
+- Panel Logístico: gestiona solicitudes, rutas, camiones, costos y estados.
+- Administración de Flotas: administra vehículos y datos técnicos.
+- Usuarios: administra cuentas internas y permisos.
+- Manual de uso: abre este documento desde el botón de información.
 
-- Panel Logístico.
-- Administración de Flotas.
-- Usuarios.
+Las solicitudes pasan por estados operativos:
 
-El usuario administrador conserva todos los permisos y puede gestionar los módulos completos. Los usuarios comunes solo ven las opciones autorizadas por el administrador.
+- Pendiente: solicitud recibida o creada, lista para completar datos y calcular.
+- Asignada: solicitud con camión y presupuesto calculado, pendiente de aceptación.
+- Confirmada: viaje aceptado por el cliente.
+- Completada: viaje finalizado y registrado como histórico.
+- Anulada: viaje cancelado conservando registro.
 
-## 3. Panel Logístico
+## 2. Página pública para clientes externos
 
-El Panel Logístico centraliza el ciclo de vida de las solicitudes de transporte ganadero. Las vistas principales son:
+La página pública permite que un cliente solicite un presupuesto sin ingresar al sistema interno.
 
-- Nueva Solicitud: creación interna de pedidos logísticos.
-- Pendientes: solicitudes listas para completar datos, calcular viaje y asignar camión.
-- Asignadas: solicitudes con presupuesto calculado y pendientes de confirmación del cliente.
-- Confirmadas: viajes aceptados por el cliente.
-- Completadas: registro histórico de viajes finalizados.
-- Anuladas: registro histórico de viajes anulados.
+Pasos para el cliente:
 
-El panel incluye métricas operativas, listado de solicitudes, detalle de cliente, combustible, ruta, mapa, cálculo de distancia, viajes, salida, llegada estimada, observaciones y acciones disponibles según el estado.
+1. Ingresar Nombre o Razón Social.
+2. Ingresar C.I. o RUC.
+3. Ingresar teléfono con prefijo internacional.
+4. Seleccionar ciudad desde la lista disponible.
+5. Enviar la solicitud.
 
-## 4. Nueva solicitud interna
+El sistema detecta el tipo de documento:
 
-Para crear una solicitud interna:
+- Si el documento contiene guion antes del último número, se considera RUC.
+- Si no contiene guion, se considera C.I.
 
-1. Seleccione o cree el cliente.
-2. Ingrese la cantidad de cabezas de ganado.
-3. Indique el peso mínimo y máximo por cabeza en kg.
-4. Seleccione fecha y hora de salida. No se permiten fechas anteriores al momento actual.
-5. Marque el punto de origen en el mapa y confirme.
-6. Marque el punto de destino en el mapa y confirme.
-7. Cree la solicitud.
+Resultado:
 
-El rango de peso permite estimar la capacidad real de cada camión y el consumo de combustible según la carga transportada.
+- La solicitud queda registrada como Pendiente.
+- El operador interno debe contactar al cliente para completar datos faltantes: punto de origen, punto de destino, fecha, horario, cantidad de cabezas y rango de peso.
 
-## 5. Solicitudes externas
+La página pública también tiene:
 
-La página pública permite que un cliente solicite presupuesto con datos básicos:
+- Botón de WhatsApp para comunicarse con BOVITRANS.
+- Acceso discreto al inicio de sesión para operadores internos.
+- Footer con datos de contacto públicos.
 
-- Nombre o razón social.
-- C.I. o RUC.
-- Teléfono con prefijo internacional.
-- Ciudad registrada en la base de datos.
+## 3. Inicio de sesión
 
-Estas solicitudes ingresan como Pendientes. El operador debe contactar al cliente por WhatsApp para completar punto de origen, destino, fecha, horario, cantidad de cabezas y rango de peso. Solo las solicitudes externas muestran el botón de WhatsApp para solicitar esos datos.
+El acceso interno solicita Correo/Usuario y contraseña. Si los datos son incorrectos, el sistema informa que se deben insertar credenciales válidas.
 
-## 6. Clientes
+Uso recomendado:
 
-El bloque Cliente permite seleccionar, crear, editar o eliminar clientes según el flujo operativo. Los datos principales son:
+1. Abrir el acceso interno desde la página pública.
+2. Escribir Correo/Usuario.
+3. Escribir contraseña.
+4. Presionar el botón de ingreso.
 
-- Nombre de empresa.
-- Razón social.
-- Tipo y número de documento.
-- Teléfono con prefijo.
+Una vez autenticado:
+
+- El sistema muestra el nombre del usuario.
+- El menú de usuario permite cerrar sesión.
+- Solo aparecen los módulos permitidos para esa cuenta.
+
+## 4. Inicio interno
+
+El inicio interno funciona como puerta de entrada a los módulos autorizados.
+
+Opciones posibles:
+
+- Panel Logístico: administración operativa de solicitudes.
+- Administración de Flotas: alta, edición y baja de camiones.
+- Usuarios: gestión de usuarios y permisos.
+
+Si un usuario no tiene permiso sobre un módulo, esa tarjeta no aparece. Esto evita accesos accidentales y simplifica la experiencia del operador.
+
+## 5. Panel Logístico
+
+El Panel Logístico es el centro operativo de BOVITRANS. Desde este módulo se crean solicitudes, se asignan camiones, se calculan costos, se confirma logística y se revisa el historial.
+
+Zonas principales:
+
+- Menú lateral: permite navegar entre Nueva Solicitud, Pendientes, Asignadas, Confirmadas, Completadas y Anuladas.
+- Métricas superiores: muestran solicitudes, pendientes y camiones libres.
+- Bandeja operacional: lista las solicitudes del estado seleccionado.
+- Panel de detalle: muestra cliente, combustible, ruta, mapa, observaciones y acciones.
+- Botón de tema: permite cambiar entre tema claro y oscuro en la interfaz interna.
+- Menú de usuario: muestra usuario actual y permite cerrar sesión.
+
+## 6. Crear nueva solicitud interna
+
+La vista Nueva Solicitud sirve para registrar solicitudes creadas por el operador.
+
+Pasos:
+
+1. Seleccionar un cliente existente o crear uno nuevo.
+2. Ingresar cantidad de cabezas de ganado.
+3. Ingresar peso mínimo por cabeza en kg.
+4. Ingresar peso máximo por cabeza en kg.
+5. Seleccionar fecha y hora de salida.
+6. Marcar el punto de origen en el mapa.
+7. Confirmar Punto de Origen.
+8. Marcar el punto de destino en el mapa.
+9. Confirmar Destino.
+10. Revisar la información.
+11. Presionar Crear Solicitud.
+
+Reglas importantes:
+
+- La fecha de salida no puede ser anterior a la fecha y hora actual.
+- El peso máximo debe ser mayor o igual al peso mínimo.
+- El origen y el destino deben ser puntos diferentes.
+- El rango de peso se usa para calcular capacidad y consumo con mayor precisión.
+
+Si el operador confirma un punto equivocado, puede volver a modificar el punto de origen o destino antes de crear la solicitud.
+
+## 7. Gestión de clientes
+
+El bloque Cliente permite consultar y administrar los datos del cliente asociado a una solicitud.
+
+Datos disponibles:
+
+- Nombre de Empresa.
+- Razón Social.
+- Tipo de Documento.
+- Número de Documento.
+- Número de Teléfono.
 - Ciudad.
-- Correo opcional.
+- Correo.
+- Fecha de última actualización.
 
-El buscador permite localizar clientes por empresa, razón social, documento o teléfono.
+Acciones:
 
-## 7. Combustible
+- Seleccionar: busca y asigna un cliente a la solicitud.
+- Crear: abre una ventana superpuesta para registrar un nuevo cliente.
+- Editar: permite modificar datos del cliente seleccionado.
+- Eliminar: elimina el cliente si no tiene solicitudes asociadas.
 
-El bloque Combustible permite elegir emblema y tipo de combustible cuando existen precios cargados. La opción de actualización ejecuta el scraper de precios para refrescar la base de datos. En el caso de Petropar, el sistema muestra vigencia cuando la fuente dispone de ese dato.
+Recomendaciones:
 
-El costo se calcula en guaraníes y utiliza:
+- Guardar teléfonos con prefijo internacional para WhatsApp.
+- Usar la ciudad desde la tabla registrada en PostgreSQL.
+- Registrar correo cuando exista, aunque no es obligatorio.
+- Verificar documento antes de crear duplicados.
 
-Distancia estimada x consumo estimado L/km x precio por litro.
+## 8. Combustible
 
-Para múltiples viajes, el cálculo contempla viajes cargados de ida y retornos vacíos intermedios cuando corresponde.
+El bloque Combustible permite elegir estación de servicio y tipo de combustible cuando existen precios cargados.
 
-## 8. Asignación de camiones
+Opciones:
 
-En Pendientes, el operador selecciona uno o varios camiones y utiliza Calcular Viaje para obtener:
+- Estación o emblema: Petropar, Shell, Petrobras, Copetrol u otros disponibles.
+- Tipo: Diésel Común o Diésel Premium cuando existan datos.
+- Precio: se muestra en guaraníes.
+- Vigencia: aparece para Petropar cuando la fuente oficial informa fecha.
+- Actualizar: ejecuta el scraping manual para refrescar precios.
 
-- Distancia estimada.
-- Capacidad efectiva.
-- Viajes necesarios.
-- Consumo estimado.
-- Costo de combustible.
-- Salida y llegada estimada.
+Uso recomendado:
 
-Si la cantidad de ganado excede la capacidad del camión seleccionado, el sistema permite evaluar múltiples camiones o múltiples viajes. Luego se confirma la asignación para mover la solicitud a Asignadas.
+1. Revisar el combustible antes de calcular.
+2. Actualizar precios si el dato parece antiguo.
+3. Seleccionar estación y tipo de combustible.
+4. Calcular el viaje con el precio vigente.
 
-## 9. Presupuesto por WhatsApp
+El sistema usa el precio seleccionado para estimar el costo de combustible de la operación.
 
-En Asignadas, el operador puede enviar el presupuesto al cliente por WhatsApp. El mensaje incluye cliente, ruta, cabezas, distancia, camiones, viajes, salida, llegada estimada, costo de combustible, instrucciones para confirmar con "Ok", datos de transferencia y alternativa de rechazo con "No".
+## 9. Mapa y ruta
 
-El teléfono del cliente debe guardarse con prefijo internacional para evitar errores de apertura de WhatsApp.
+El mapa permite trabajar con puntos geográficos reales.
 
-## 10. Confirmación, cancelación y cierre
+Funciones:
 
-En Asignadas:
+- Seleccionar origen.
+- Seleccionar destino.
+- Visualizar marcadores.
+- Ver trazado estimado de la ruta.
+- Acercar y alejar el mapa.
+- Consultar distancia estimada.
 
-- Confirmar Logística mueve la solicitud a Confirmadas.
-- Cancelar Logística devuelve la solicitud a Pendientes.
-- Eliminar Solicitud borra solicitudes pendientes o asignadas cuando el cliente no acepta el presupuesto.
+La distancia se obtiene mediante ruta real cuando el servicio de ruteo responde correctamente. Si el servicio externo no responde, el sistema mantiene un comportamiento funcional con cálculo alternativo.
 
-En Confirmadas:
+Buenas prácticas:
 
-- Completar Viaje mueve el registro a Completadas.
-- Anular Viaje mueve el registro a Anuladas, siempre que la solicitud no corresponda a un mes anterior.
+- Acercar el mapa antes de seleccionar puntos.
+- Revisar que origen y destino correspondan al lugar solicitado por el cliente.
+- Confirmar los puntos antes de calcular el viaje.
 
-Las vistas Confirmadas, Completadas y Anuladas cuentan con buscadores por empresa, documento, teléfono, fecha y periodo cuando corresponde.
+## 10. Cálculo logístico
 
-## 11. Administración de Flotas
+El cálculo de BOVITRANS combina distancia, combustible, capacidad, peso y cantidad de viajes.
 
-El módulo de flotas gestiona los camiones de BOVITRANS. Cada vehículo registra:
+Datos usados:
+
+- Distancia estimada en km.
+- Precio de combustible por litro.
+- Cantidad de cabezas.
+- Peso mínimo y máximo por cabeza.
+- Peso promedio estimado.
+- Capacidad legal y técnica del camión.
+- Consumo vacío L/km.
+- Factor de consumo L/km/tn.
+
+Fórmulas operativas:
+
+- Peso promedio = peso mínimo + peso máximo, dividido 2.
+- Capacidad efectiva = peso máximo del camión en kg dividido peso promedio por cabeza.
+- Consumo cargado = consumo vacío + toneladas transportadas por factor de consumo.
+- Costo = distancia x consumo estimado x precio por litro.
+
+Para múltiples viajes:
+
+- Se suman los viajes cargados de ida.
+- Se suman los retornos vacíos intermedios cuando un mismo camión debe volver para cargar nuevamente.
+- La llegada estimada considera la distancia total operativa.
+
+## 11. Solicitudes pendientes
+
+La vista Pendientes muestra solicitudes que todavía necesitan cálculo o asignación.
+
+Flujos posibles:
+
+- Solicitud interna completa: seleccionar combustible y camión, luego Calcular Viaje.
+- Solicitud externa incompleta: contactar al cliente por WhatsApp y completar origen, destino, fecha, horario, cabezas y rango de peso.
+
+Acciones disponibles:
+
+- Completar datos pendientes.
+- Contactar cliente por WhatsApp si la solicitud proviene de la página pública.
+- Seleccionar uno o varios camiones.
+- Calcular Viaje.
+- Desasignar Camión si se necesita elegir otro.
+- Confirmar Asignación para mover la solicitud a Asignadas.
+- Eliminar Solicitud si corresponde.
+
+Si la carga excede la capacidad del camión:
+
+- El sistema advierte la situación.
+- Puede evaluarse otro camión.
+- Puede seleccionarse más de un camión.
+- Puede elegirse la opción de múltiples viajes.
+
+## 12. Solicitudes asignadas
+
+La vista Asignadas contiene solicitudes con presupuesto calculado.
+
+Acciones:
+
+- Enviar Presupuesto por WhatsApp.
+- Confirmar Logística.
+- Cancelar Logística.
+- Eliminar Solicitud.
+
+Enviar Presupuesto por WhatsApp:
+
+- Abre WhatsApp con un mensaje preparado.
+- Incluye cliente, ruta, cabezas, distancia, camiones, viajes, salida, llegada estimada y costo.
+- Solicita responder Ok para confirmar.
+- Solicita adjuntar comprobante de transferencia.
+- Indica el alias RUC 5378130-9.
+- Indica responder No si el cliente no acepta.
+
+Confirmar Logística:
+
+- Debe usarse cuando el cliente acepta el presupuesto.
+- Mueve la solicitud a Confirmadas.
+
+Cancelar Logística:
+
+- Devuelve la solicitud a Pendientes.
+- Permite recalcular con otro camión, combustible o costo.
+
+Eliminar Solicitud:
+
+- Se usa si la solicitud ya no continuará.
+- Libera recursos asociados cuando corresponde.
+
+## 13. Solicitudes confirmadas
+
+La vista Confirmadas funciona como registro de viajes aceptados por el cliente.
+
+Acciones:
+
+- Completar Viaje.
+- Anular Viaje.
+
+Completar Viaje:
+
+- Se utiliza cuando la logística fue realizada.
+- Mueve la solicitud a Completadas.
+
+Anular Viaje:
+
+- Se utiliza si el viaje confirmado finalmente no se realiza.
+- Requiere confirmación porque no debe ejecutarse por accidente.
+- No se permite anular viajes de meses anteriores.
+- Mueve la solicitud a Anuladas.
+
+Búsqueda:
+
+- Empresa.
+- RUC o C.I.
+- Teléfono.
+- Fecha.
+
+## 14. Solicitudes completadas
+
+La vista Completadas es histórica. Sirve para consultar viajes finalizados.
+
+Características:
+
+- No permite eliminar.
+- No permite anular.
+- Conserva datos de cliente, ruta, camiones, costos y fechas.
+- Permite búsqueda histórica.
+
+Búsqueda:
+
+- Empresa.
+- RUC o C.I.
+- Teléfono.
+- Fecha.
+- Periodo, por ejemplo 06-2026.
+
+## 15. Solicitudes anuladas
+
+La vista Anuladas registra operaciones canceladas.
+
+Características:
+
+- Conserva historial de solicitudes anuladas.
+- Permite auditoría de decisiones operativas.
+- Evita borrar información relevante del negocio.
+
+Búsqueda:
+
+- Empresa.
+- RUC o C.I.
+- Teléfono.
+- Fecha.
+- Periodo, por ejemplo 06-2026.
+
+## 16. Administración de Flotas
+
+El módulo Administración de Flotas permite gestionar los camiones de la empresa.
+
+Datos del camión:
 
 - Patente.
-- Marca y modelo.
-- Potencia.
-- Tara.
+- Marca.
+- Modelo.
+- Potencia HP.
+- Tara en toneladas.
 - Configuración vehicular.
 - Configuración de eje y rodado.
 - Longitud máxima.
-- Límite de peso.
+- Límite de peso en toneladas.
 - Consumo vacío L/km.
 - Factor de consumo L/km/tn.
 - Estado operativo.
 
-La capacidad máxima de cabezas y el consumo cargado se calculan durante cada solicitud según el peso promedio informado. Desde Flotas no se puede crear ni cambiar manualmente un camión al estado Asignado; ese estado solo se gestiona desde el Panel Logístico.
+Estados:
 
-## 12. Usuarios y permisos
+- Disponible: puede ser asignado desde el Panel Logístico.
+- Mantenimiento: no puede ser asignado.
+- Asignado: solo se gestiona desde el Panel Logístico.
 
-El módulo Usuarios permite crear, editar, activar, desactivar y eliminar usuarios internos. También permite otorgar o quitar acceso a:
+Reglas:
+
+- No se puede crear un camión directamente como Asignado desde Flotas.
+- No se puede cambiar manualmente un camión a Asignado desde Flotas.
+- La capacidad final de cabezas se calcula durante cada solicitud según el rango de peso informado.
+- El consumo cargado se calcula según datos técnicos del camión y peso transportado.
+
+Modelos frecuentes:
+
+- La interfaz puede ofrecer presets de camiones usados como referencia.
+- El operador puede ajustar datos técnicos si registra otro vehículo.
+
+## 17. Usuarios y permisos
+
+El módulo Usuarios permite administrar accesos internos.
+
+Datos del usuario:
+
+- Usuario.
+- Correo.
+- Nombre completo.
+- Contraseña.
+- Estado activo o inactivo.
+- Permisos por módulo.
+
+Permisos disponibles:
 
 - Panel Logístico.
 - Administración de Flotas.
 - Usuarios.
 
-El usuario administrador es superusuario, no puede eliminarse ni perder permisos críticos.
+Reglas:
 
-## 13. Mapa y rutas
+- El superusuario administrador conserva acceso completo.
+- El administrador no debe perder permisos críticos.
+- Los usuarios inactivos no deberían operar el sistema.
+- Si un usuario no tiene permiso, el módulo no aparece en el inicio.
 
-El mapa permite seleccionar origen y destino, visualizar marcadores, ver la ruta estimada y operar con controles de acercamiento y alejamiento. La distancia se calcula con rutas reales cuando el servicio externo responde correctamente, y el sistema conserva un comportamiento funcional ante errores de red.
+## 18. Tema claro y oscuro
 
-## 14. Recomendaciones operativas
+La interfaz interna permite cambiar entre modo claro y oscuro.
 
-- Mantenga actualizados los precios de combustible antes de presupuestar.
-- Verifique que el teléfono del cliente incluya prefijo.
-- Revise el rango de peso antes de calcular capacidad y viajes.
-- Confirme la logística solo después de la aceptación del cliente.
-- Use Anular Viaje para conservar registro histórico cuando una operación confirmada no se realiza.
+Uso:
+
+- Presionar el botón circular ubicado en la parte superior.
+- Elegir el tema más cómodo para el operador.
+
+Notas:
+
+- La página pública y el inicio de sesión permanecen en modo claro.
+- El modo oscuro está pensado para uso interno.
+
+## 19. Manual de uso
+
+El botón de información abre este manual en una nueva pestaña.
+
+Uso recomendado:
+
+- Consultarlo cuando un operador nuevo necesite orientación.
+- Revisarlo antes de operar estados críticos.
+- Usarlo como guía de capacitación interna.
+
+El manual no debe incluir credenciales de prueba ni información sensible.
+
+## 20. Buenas prácticas operativas
+
+- Actualizar precios de combustible antes de presupuestar.
+- Verificar cliente, teléfono y ciudad.
+- Confirmar origen y destino con el cliente.
+- Ingresar correctamente cantidad de cabezas y rango de peso.
+- Revisar capacidad del camión antes de confirmar asignación.
+- Enviar presupuesto por WhatsApp solo cuando el cálculo esté revisado.
+- Confirmar logística solo después de aceptación del cliente.
+- Usar Cancelar Logística si se necesita recalcular.
+- Usar Anular Viaje para conservar historial cuando un viaje confirmado no se realiza.
+- Usar Completar Viaje solo cuando la operación finalizó.
+
+## 21. Problemas frecuentes
+
+No aparece un módulo:
+
+- Verifique permisos del usuario.
+- Un administrador puede otorgar acceso desde Usuarios.
+
+No se puede asignar un camión:
+
+- Verifique que el camión esté Disponible.
+- Verifique que no esté en Mantenimiento.
+- Revise si la solicitud tiene datos completos.
+
+El costo parece incorrecto:
+
+- Verifique distancia.
+- Verifique combustible seleccionado.
+- Verifique rango de peso.
+- Verifique si el viaje requiere múltiples viajes o retornos vacíos.
+
+No abre WhatsApp:
+
+- Verifique que el teléfono tenga prefijo internacional.
+- Verifique que el navegador permita abrir enlaces externos.
+
+No se puede anular un viaje:
+
+- Los viajes de meses anteriores no pueden anularse desde la interfaz.
+
+## 22. Cierre
+
+BOVITRANS fue diseñado para ordenar la operación logística ganadera, reducir errores de cálculo, mejorar la trazabilidad de solicitudes y facilitar la comunicación con clientes. El uso correcto del sistema depende de mantener datos actualizados, revisar cada cálculo y respetar el flujo de estados.
