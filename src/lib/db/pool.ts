@@ -6,10 +6,20 @@ const globalForPg = globalThis as unknown as {
   pgPool?: Pool;
 };
 
+function shouldUseSsl(connectionString: string) {
+  return (
+    connectionString.includes("sslmode=require") ||
+    connectionString.includes("neon.tech")
+  );
+}
+
 export function getPool() {
   if (!globalForPg.pgPool) {
+    const connectionString = requireDatabaseUrl();
+
     globalForPg.pgPool = new Pool({
-      connectionString: requireDatabaseUrl(),
+      connectionString,
+      ssl: shouldUseSsl(connectionString) ? { rejectUnauthorized: false } : undefined,
       max: 10,
       idleTimeoutMillis: 30_000,
       connectionTimeoutMillis: 5_000,
