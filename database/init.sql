@@ -4,6 +4,8 @@
 -- Idempotente: usa IF NOT EXISTS y ON CONFLICT DO NOTHING
 -- ============================================================
 
+CREATE EXTENSION IF NOT EXISTS pgcrypto;
+
 -- ─────────────────────────────────────────
 -- TIPOS ENUM
 -- ─────────────────────────────────────────
